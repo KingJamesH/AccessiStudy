@@ -256,12 +256,20 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
             font-style: italic;
           }
           
-          .accessibility-dyslexic, 
-          .accessibility-dyslexic * {
+          .accessibility-dyslexic {
             font-family: 'OpenDyslexic', sans-serif !important;
-            letter-spacing: 0.05em !important;
-            word-spacing: 0.1em !important;
-            line-height: 1.6 !important;
+            /* Allow spacing to be controlled by other styles */
+            letter-spacing: inherit !important;
+            word-spacing: inherit !important;
+            line-height: inherit !important;
+          }
+          
+          /* Apply font to all child elements */
+          .accessibility-dyslexic * {
+            font-family: inherit !important;
+            letter-spacing: inherit !important;
+            word-spacing: inherit !important;
+            line-height: inherit !important;
           }
           
           .accessibility-dyslexic b,
@@ -316,8 +324,9 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
           line-height: ${lineHeight} !important;
         }
         
-        /* Apply to all text elements */
-        body * {
+        /* Apply to all text elements, including when dyslexic font is enabled */
+        body *,
+        .accessibility-dyslexic * {
           letter-spacing: ${letterSpacing}em !important;
           word-spacing: ${wordSpacing}em !important;
           line-height: ${lineHeight} !important;

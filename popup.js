@@ -64,6 +64,44 @@ function updateTheme(isDarkMode) {
   }
 }
 
+// Function to extract main content from the page
+async function extractPageContent() {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  
+  // Inject content script to extract the main content
+  try {
+    const [{ result }] = await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: () => {
+        // Try to get the main content using common selectors
+        const selectors = [
+          'main',
+          'article',
+          '[role="main"]',
+          '.main-content',
+          '.article',
+          '.post',
+          'body'
+        ];
+        
+        for (const selector of selectors) {
+          const element = document.querySelector(selector);
+          if (element && element.textContent.trim().length > 100) {
+            return element.innerText.trim();
+          }
+        }
+        
+        return document.body.innerText.trim();
+      }
+    });
+    
+    return result;
+  } catch (error) {
+    console.error('Error extracting content:', error);
+    throw new Error('Could not extract page content');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // DOM
   const highContrastToggle = document.getElementById('highContrast');
@@ -106,6 +144,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTheme(isDarkMode);
     chrome.storage.sync.set({ darkMode: isDarkMode });
   });
+  
+  // No AI functionality
   
   // Event Listeners
   textSizeSlider.addEventListener('input', () => {
