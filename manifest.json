@@ -10,7 +10,14 @@
     ],
     "host_permissions": ["<all_urls>"],
     "web_accessible_resources": [{
-      "resources": ["contentScript.js", "styles.css"],
+      "resources": [
+        "contentScript.js", 
+        "styles.css",
+        "fonts/OpenDyslexic-Regular.otf",
+        "fonts/OpenDyslexic-Bold.otf",
+        "fonts/OpenDyslexic-Italic.otf",
+        "fonts/OpenDyslexic-BoldItalic.otf"
+      ],
       "matches": ["<all_urls>"]
     }],
     "action": {

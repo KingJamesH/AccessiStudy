@@ -1,4 +1,71 @@
+async function sendSettingsToContent(settings, retries = 3) {
+    try {
+      const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+      if (!tab) throw new Error('No active tab found');
+      
+      try {
+        await chrome.tabs.sendMessage(tab.id, {
+          action: 'applyAccessibility',
+          settings: settings
+        });
+        return true;
+      } catch (error) {
+        if (retries > 0 && error.message.includes('receiving end')) {
+          console.log(`Content script not ready, injecting and retrying... (${retries} attempts left)`);
+          await chrome.scripting.executeScript({
+            target: {tabId: tab.id},
+            files: ['contentScript.js']
+          });
+          await new Promise(resolve => setTimeout(resolve, 200));
+          return sendSettingsToContent(settings, retries - 1);
+        }
+        throw error;
+      }
+    } catch (error) {
+      console.error('Error sending settings to content script:', error);
+      showStatus('Error applying settings. Please refresh the page and try again.');
+      return false;
+    }
+  }
+  
+  async function injectAndSendMessage(settings) {
+    try {
+      const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+      if (!tab) return false;
+  
+      try {
+        return await sendSettingsToContent(settings);
+      } catch (err) {
+        console.log('Initial send failed, attempting to inject content script...');
+        await chrome.scripting.executeScript({
+          target: {tabId: tab.id},
+          files: ['contentScript.js']
+        });
+        
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        return await sendSettingsToContent(settings);
+      }
+    } catch (error) {
+      console.error('Error in injectAndSendMessage:', error);
+      showStatus('Error applying settings. Please refresh the page and try again.');
+      return false;
+    }
+  }
+  
+
+// Function to update the theme based on dark mode preference
+function updateTheme(isDarkMode) {
+  const root = document.documentElement;
+  if (isDarkMode) {
+    root.setAttribute('data-theme', 'dark');
+  } else {
+    root.removeAttribute('data-theme');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  // DOM
   const highContrastToggle = document.getElementById('highContrast');
   const textSizeSlider = document.getElementById('textSize');
   const textSizeValue = document.getElementById('textSizeValue');
@@ -12,7 +79,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const applyBtn = document.getElementById('applyBtn');
   const resetBtn = document.getElementById('resetBtn');
   const statusEl = document.getElementById('status');
+  const darkModeToggle = document.getElementById('darkModeToggle');
   
+  // Set dark mode as default and handle theme toggle
+  const initializeDarkMode = async () => {
+    // Default to dark mode if not set
+    const data = await chrome.storage.sync.get('darkMode');
+    const isDarkMode = data.darkMode !== undefined ? data.darkMode : true;
+    
+    // Update UI and theme
+    darkModeToggle.checked = isDarkMode;
+    updateTheme(isDarkMode);
+    
+    // Save the preference if it wasn't set
+    if (data.darkMode === undefined) {
+      await chrome.storage.sync.set({ darkMode: true });
+    }
+  };
+  
+  // Initialize dark mode
+  initializeDarkMode();
+  
+  // Toggle dark mode
+  darkModeToggle.addEventListener('change', (e) => {
+    const isDarkMode = e.target.checked;
+    updateTheme(isDarkMode);
+    chrome.storage.sync.set({ darkMode: isDarkMode });
+  });
+  
+  // Event Listeners
   textSizeSlider.addEventListener('input', () => {
     textSizeValue.textContent = `${textSizeSlider.value}%`;
   });
@@ -39,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const minTextSpacing = 1.0;  
     const maxTextSpacing = 3.0;  
     
-    const currentTextSpacing = Math.min(Math.max(settings.textSpacing || defaultTextSpacing, minTextSpacing), maxTextSpacing);
+    const currentTextSpacing = Math.min(Math.max(settings.textSpacing || defaultTextSpacing, minTextSpacing), (minTextSpacing+maxTextSpacing)/2);
     
     textSpacingSlider.min = minTextSpacing;
     textSpacingSlider.max = maxTextSpacing;
@@ -50,9 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
       textSpacingValue.textContent = `${Math.round(currentTextSpacing * 100)}%`;
     }
     
-    // Initialize line spacing
     const defaultLineSpacing = 1.0;
-    const currentLineSpacing = Math.min(Math.max(settings.lineSpacing || defaultLineSpacing, minTextSpacing), maxTextSpacing);
+    const currentLineSpacing = Math.min(Math.max(settings.lineSpacing || defaultLineSpacing, minTextSpacing), (minTextSpacing+maxTextSpacing)/2);
     
     lineSpacingSlider.min = minTextSpacing;
     lineSpacingSlider.max = maxTextSpacing;
@@ -77,8 +171,8 @@ document.addEventListener('DOMContentLoaded', () => {
       dyslexicFont: dyslexicFontToggle.checked,
       textSpacing: parseFloat(textSpacingSlider.value),
       lineSpacing: parseFloat(lineSpacingSlider.value),
-      overlayColor: overlayColorPicker.value,
-      overlayOpacity: parseFloat(overlayOpacitySlider.value)
+      ...(overlayColorPicker && { overlayColor: overlayColorPicker.value }),
+      ...(overlayOpacitySlider && { overlayOpacity: parseFloat(overlayOpacitySlider.value) })
     };
     
     if (statusEl) {
@@ -108,10 +202,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return; 
     }
     
-    setTimeout(() => window.close(), 500);
+    // Keep popup open after applying settings
   });
   
   resetBtn.addEventListener('click', async () => {
+    // Set default values in the UI
     highContrastToggle.checked = false;
     textSizeSlider.value = 100;
     textSizeValue.textContent = '100%';
@@ -128,10 +223,23 @@ document.addEventListener('DOMContentLoaded', () => {
       lineSpacingValue.textContent = '100%';
     }
     
+    if (overlayColorPicker) overlayColorPicker.value = '#000000';
+    if (overlayOpacitySlider) overlayOpacitySlider.value = 0;
+    
     if (statusEl) {
       statusEl.textContent = 'Resetting to default settings...';
       statusEl.className = 'status-message info show';
     }
+    
+    const defaultSettings = {
+      highContrast: false,
+      textSize: 100,
+      dyslexicFont: false,
+      textSpacing: 1.0,
+      lineSpacing: 1.0,
+      overlayColor: '#000000',
+      overlayOpacity: 0
+    };
     
     try {
       await chrome.storage.sync.set(defaultSettings);
@@ -144,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
           statusEl.className = 'status-message success show';
         }
       } else {
-        throw new Error('Failed to reset settings');
+        throw new Error('Failed to apply default settings');
       }
     } catch (error) {
       console.error('Error resetting settings:', error);
@@ -152,10 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         statusEl.textContent = 'Error resetting settings. Please try again.';
         statusEl.className = 'status-message error show';
       }
-      return; 
     }
-    
-    setTimeout(() => window.close(), 500);
   });
   
   function debounce(func, wait) {
@@ -186,13 +291,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 150); 
 
-  [highContrastToggle, dyslexicFontToggle].forEach(element => {
+  [highContrastToggle, dyslexicFontToggle].filter(Boolean).forEach(element => {
     element.addEventListener('change', updateSettingsInRealTime);
   });
   
-  [textSizeSlider, textSpacingSlider, overlayOpacitySlider].forEach(element => {
-    element.addEventListener('input', updateSettingsInRealTime);
+  [textSizeSlider, textSpacingSlider, lineSpacingSlider].filter(Boolean).forEach(element => {
+    if (element) {
+      element.addEventListener('input', updateSettingsInRealTime);
+    }
   });
   
-  overlayColorPicker.addEventListener('change', updateSettingsInRealTime);
+  if (overlayColorPicker) {
+    overlayColorPicker.addEventListener('change', updateSettingsInRealTime);
+  }
+  
+  if (overlayOpacitySlider) {
+    overlayOpacitySlider.addEventListener('input', updateSettingsInRealTime);
+  }
 });

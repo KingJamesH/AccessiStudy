@@ -1,25 +1,61 @@
+:root {
+  --bg-color: #f5f5f5;
+  --text-color: #333;
+  --card-bg: white;
+  --border-color: #e0e0e0;
+  --primary-color: #1a73e8;
+  --primary-hover: #1557b0;
+  --secondary-bg: #f1f3f4;
+  --secondary-text: #5f6368;
+  --secondary-hover: #e8eaed;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+  --bg-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --card-bg: #2d2d2d;
+  --border-color: #444;
+  --primary-color: #5b9bff;
+  --primary-hover: #7aadff;
+  --secondary-bg: #3c3c3c;
+  --secondary-text: #9aa0a6;
+  --secondary-hover: #4d4d4d;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
 .popup-body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   width: 300px;
   padding: 15px;
   margin: 0;
-  background-color: #f5f5f5;
-  color: #333;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  position: relative;
 }
 
 h1 {
   font-size: 18px;
   margin: 0 0 15px 0;
-  color: #1a73e8;
+  color: var(--primary-color);
   text-align: center;
   padding-bottom: 10px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .setting {
@@ -27,9 +63,10 @@ h1 {
   flex-direction: column;
   gap: 5px;
   padding: 10px;
-  background: white;
+  background: var(--card-bg);
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px var(--shadow-color);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 label {
@@ -58,7 +95,7 @@ input[type="range"] {
 
 button {
   flex: 1;
-  background-color: #1a73e8;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   padding: 10px 15px;
@@ -70,34 +107,92 @@ button {
 }
 
 button:hover {
-  background-color: #1557b0;
+  background-color: var(--primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 button:active {
-  background-color: #0d47a1;
   transform: translateY(0);
   box-shadow: none;
 }
 
 button.secondary {
-  background-color: #f1f3f4;
-  color: #5f6368;
-  border: 1px solid #dadce0;
+  background-color: var(--secondary-bg);
+  color: var(--secondary-text);
+  border: 1px solid var(--border-color);
 }
 
 button.secondary:hover {
-  background-color: #e8eaed;
-  border-color: #c6c9ce;
+  background-color: var(--secondary-hover);
+  border-color: var(--border-color);
 }
 
 button:disabled {
-  background-color: #e8eaed;
-  color: #9aa0a6;
+  background-color: var(--secondary-bg);
+  color: var(--secondary-text);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+}
+
+.theme-toggle:hover {
+  background-color: var(--secondary-hover);
+}
+
+.theme-icon {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+}
+
+.theme-icon .sun,
+.theme-icon .moon {
+  position: absolute;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0.7;
+}
+
+.theme-icon .sun {
+  opacity: 1;
+}
+
+.theme-icon .moon {
+  opacity: 0;
+  transform: rotate(-30deg);
+}
+
+[data-theme="dark"] .theme-icon .sun {
+  opacity: 0;
+  transform: rotate(30deg);
+}
+
+[data-theme="dark"] .theme-icon .moon {
+  opacity: 1;
+  transform: rotate(0);
+}
+
+theme-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary-color);
 }
 
 /* Status message styles */
@@ -204,7 +299,6 @@ button:disabled {
   letter-spacing: inherit !important;
 }
 
-/* Focus styles for keyboard navigation */
 :focus-visible {
   outline: 2px solid #1a73e8 !important;
   outline-offset: 2px !important;
