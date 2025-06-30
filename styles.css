@@ -787,6 +787,220 @@ input[type="checkbox"]:focus-visible {
   border-radius: 2px;
 }
 
+/* API Key Section Styles */
+.api-key-container {
+  background: var(--card-bg);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid var(--border-color);
+}
+
+.api-key-hint {
+  color: var(--secondary-text);
+  font-size: 12px;
+  margin-top: 10px;
+  line-height: 1.4;
+}
+
+.api-key-actions {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.text-button {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.text-button:hover {
+  background-color: var(--primary-light);
+}
+
+.text-button i {
+  font-size: 11px;
+}
+
+/* Animation for section changes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.setting {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* API Key Input Styles */
+.input-with-button {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+#apiKey {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+#apiKey:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+#saveApiKey {
+  padding: 0 12px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+#saveApiKey:hover {
+  background-color: var(--primary-hover);
+}
+
+#saveApiKey:active {
+  transform: translateY(1px);
+}
+
+.setting-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.setting-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.fa-info-circle {
+  color: var(--secondary-text);
+  font-size: 12px;
+  cursor: help;
+}
+
+/* AI Summarize Button Styles */
+#summarizeButton {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+#summarizeButton:hover {
+  background-color: var(--primary-hover);
+}
+
+#summarizeButton:disabled {
+  background-color: var(--secondary-bg);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+#summarizeButton i {
+  font-size: 16px;
+}
+
+.summary-result {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.status-message {
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin: 8px 0;
+  font-size: 13px;
+  line-height: 1.4;
+  display: none;
+  animation: fadeIn 0.3s ease-out;
+  border: 1px solid transparent;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.status-message.error {
+  background-color: rgba(255, 107, 107, 0.15);
+  color: var(--danger-color);
+  border-color: rgba(255, 107, 107, 0.2);
+}
+
+.status-message.success {
+  background-color: rgba(46, 204, 113, 0.15);
+  color: var(--success-color);
+  border-color: rgba(46, 204, 113, 0.2);
+}
+
+.status-message.info {
+  background-color: rgba(0, 180, 216, 0.15);
+  color: var(--accent-color);
+  border-color: rgba(0, 180, 216, 0.2);
+}
+
+.status-message.loading {
+  position: relative;
+  padding-left: 36px;
+}
+
+.status-message.loading:before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--accent-color);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .annotation-underline {
   text-decoration: underline;
   text-decoration-color: currentColor;

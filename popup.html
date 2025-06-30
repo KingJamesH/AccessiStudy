@@ -43,11 +43,13 @@
           </div>
         </button>
         <div id="text-settings" class="section-content" style="display: block;">
-        <div class="setting">
-          <label for="textSize"> <!--text size-->
-            <div class="setting-name-row">
-              <span class="setting-name">Text Size</span>
-              <span class="value-display" id="textSizeValue">100%</span>
+
+          
+          <div class="setting">
+            <label for="textSize"> <!--text size-->
+              <div class="setting-name-row">
+                <span class="setting-name">Text Size</span>
+                <span class="value-display" id="textSizeValue">100%</span>
             </div>
           </label>
           <input type="range" id="textSize" min="80" max="200" step="5" value="100" aria-label="Adjust text size">
@@ -79,6 +81,8 @@
         </div>
 
         </div>
+
+        
         
         <button class="collapsible-section" aria-expanded="true" aria-controls="display-settings">
           <div class="section-header">
@@ -112,6 +116,38 @@
             <!-- <span class="setting-hint">Improves text visibility</span> -->
           </label>
         </div>
+    </div>
+    
+    <!-- API Key Input Section (shown by default) -->
+    <div id="apiKeySection" class="setting" style="margin-top: 15px; display: none;">
+      <div class="api-key-container">
+        <label for="apiKey">
+          <div class="setting-name-row">
+            <span class="setting-name">Gemini API Key</span>
+            <i class="fas fa-info-circle" title="Get your API key from Google AI Studio"></i>
+          </div>
+        </label>
+        <div class="input-with-button">
+          <input type="password" id="apiKey" placeholder="Enter your Gemini API key" style="width: 100%;">
+          <button id="saveApiKey" class="small-button">Save</button>
+        </div>
+        <div id="apiKeyStatus" class="status-message" style="display: none; margin-top: 8px;"></div>
+        <p class="api-key-hint">Your API key is stored locally and only used for generating summaries.</p>
+      </div>
+    </div>
+    
+    <!-- Summarize Section (hidden by default) -->
+    <div id="summarizeSection" class="setting" style="margin-top: 15px; display: none;">
+      <button id="summarizeButton" class="action-button" style="width: 100%;">
+        <i class="fas fa-robot"></i> AI Summarize Page
+      </button>
+      <div id="summaryStatus" class="status-message" style="display: none;"></div>
+      <div id="summaryResult" class="summary-result" style="margin-top: 10px; display: none;"></div>
+      <div class="api-key-actions">
+        <button id="changeApiKey" class="text-button">
+          <i class="fas fa-key"></i> Change API Key
+        </button>
+      </div>
     </div>
     <div class="button-group">
         <button id="applyBtn">Apply Settings</button>

@@ -6,12 +6,16 @@
     "permissions": [
       "activeTab",
       "storage",
-      "scripting"
+      "scripting",
+      "webRequest"
     ],
     "host_permissions": [
       "<all_urls>",
-      "https://api.openai.com/*"
+      "https://generativelanguage.googleapis.com/*"
     ],
+    "content_security_policy": {
+      "extension_pages": "script-src 'self'; connect-src 'self' https://generativelanguage.googleapis.com;"
+    },
     "web_accessible_resources": [{
       "resources": [
         "contentScript.js", 

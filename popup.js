@@ -1014,10 +1014,316 @@ function setupCollapsibleSections() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+// Function to show status message
+function showStatusMessage(message, type = 'info') {
+  const statusElement = document.getElementById('summaryStatus');
+  statusElement.textContent = message;
+  statusElement.className = 'status-message';
+  statusElement.classList.add(type);
+  statusElement.style.display = 'block';
+  
+  // Hide status after 5 seconds if it's not an error
+  if (type !== 'error') {
+    setTimeout(() => {
+      if (statusElement.textContent === message) {
+        statusElement.style.display = 'none';
+      }
+    }, 5000);
+  }
+}
+
+// Configuration for Google's Gemini API
+let GEMINI_API_KEY = ''; // Will be loaded from storage
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent';
+
+// Toggle between API key and summarize sections
+function toggleSections(hasApiKey) {
+  const apiKeySection = document.getElementById('apiKeySection');
+  const summarizeSection = document.getElementById('summarizeSection');
+  
+  if (hasApiKey) {
+    apiKeySection.style.display = 'none';
+    summarizeSection.style.display = 'block';
+  } else {
+    apiKeySection.style.display = 'block';
+    summarizeSection.style.display = 'none';
+  }
+}
+
+// Load API key from storage and update UI
+async function loadApiKey() {
+  try {
+    const result = await chrome.storage.sync.get(['geminiApiKey']);
+    if (result.geminiApiKey) {
+      GEMINI_API_KEY = result.geminiApiKey;
+      document.getElementById('apiKey').value = result.geminiApiKey;
+      toggleSections(true);
+    } else {
+      toggleSections(false);
+    }
+  } catch (error) {
+    console.error('Error loading API key:', error);
+    toggleSections(false);
+  }
+}
+
+// Save API key to storage
+async function saveApiKey(key) {
+  if (!key.trim()) {
+    showStatusMessage('Please enter an API key', 'error');
+    return false;
+  }
+  
+  try {
+    // Show loading state
+    const statusElement = document.getElementById('apiKeyStatus');
+    if (statusElement) {
+      statusElement.textContent = 'Validating API key...';
+      statusElement.style.display = 'block';
+      statusElement.className = 'status-message info';
+    }
+    
+    // Test the API key with a short timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
+    const testUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=${key}`;
+    const response = await fetch(testUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: 'Test' }] }],
+        generationConfig: { maxOutputTokens: 10 }
+      }),
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      let errorMessage = 'Invalid API key';
+      
+      if (response.status === 400) {
+        errorMessage = 'Invalid API key format';
+      } else if (response.status === 403) {
+        errorMessage = 'API key is invalid or disabled';
+      } else if (response.status === 429) {
+        errorMessage = 'Rate limit exceeded. Please try again later.';
+      } else if (response.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+      
+      throw new Error(errorMessage);
+    }
+    
+    // Save the key if test passes
+    await chrome.storage.sync.set({ geminiApiKey: key });
+    GEMINI_API_KEY = key;
+    
+    if (statusElement) {
+      statusElement.textContent = 'API key saved successfully!';
+      statusElement.className = 'status-message success';
+      setTimeout(() => {
+        statusElement.style.display = 'none';
+      }, 3000);
+    }
+    
+    toggleSections(true);
+    return true;
+  } catch (error) {
+    console.error('Error saving API key:', error);
+    const statusElement = document.getElementById('apiKeyStatus') || document.createElement('div');
+    statusElement.id = 'apiKeyStatus';
+    statusElement.textContent = error.message || 'Failed to validate API key. Please check your connection and try again.';
+    statusElement.className = 'status-message error';
+    statusElement.style.display = 'block';
+    
+    // Add status element if it doesn't exist
+    if (!document.getElementById('apiKeyStatus')) {
+      const apiKeyContainer = document.querySelector('.api-key-container');
+      if (apiKeyContainer) {
+        apiKeyContainer.appendChild(statusElement);
+      }
+    }
+    
+    return false;
+  }
+}
+
+// Setup API key input handler
+function setupApiKeyHandlers() {
+  const apiKeyInput = document.getElementById('apiKey');
+  const saveButton = document.getElementById('saveApiKey');
+  const changeApiKeyBtn = document.getElementById('changeApiKey');
+  
+  // Save on button click
+  saveButton.addEventListener('click', async () => {
+    const key = apiKeyInput.value.trim();
+    await saveApiKey(key);
+  });
+  
+  // Also save on Enter key
+  apiKeyInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      saveButton.click();
+    }
+  });
+  
+  // Handle change API key
+  changeApiKeyBtn?.addEventListener('click', () => {
+    chrome.storage.sync.remove('geminiApiKey');
+    GEMINI_API_KEY = '';
+    apiKeyInput.value = '';
+    toggleSections(false);
+    apiKeyInput.focus();
+  });
+}
+
+// Function to test Gemini API key
+async function testGeminiKey() {
+  try {
+    console.log('Testing Gemini API key...');
+    const testUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=${GEMINI_API_KEY}`;
+    
+    const response = await fetch(testUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: 'Hello, how are you?'
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 100,
+        }
+      })
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+      console.error('API Error:', data.error?.message || 'Unknown error');
+      throw new Error('Invalid API key or API error');
+    }
+
+    return { valid: true, model: 'gemini-1.5-flash-8b' };
+  } catch (error) {
+    console.error('Gemini API Key Test Error:', error);
+    return {
+      valid: false,
+      error: error.message
+    };
+  }
+}
+
+// Generate summary using Gemini API
+async function generateAISummary(content, title) {
+  if (!GEMINI_API_KEY) {
+    showStatusMessage('Please set your Gemini API key in the settings', 'error');
+    document.getElementById('apiKey').focus();
+    throw new Error('API key not set');
+  }
+
+  try {
+    const prompt = `Summarize this web page in one paragraph (2-4 sentences):
+    Title: ${title}
+    Content: ${content.substring(0, 25000)}`;
+
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 300
+        }
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || 'Failed to generate summary');
+    
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No summary available';
+  } catch (error) {
+    console.error('Gemini API Error:', error);
+    throw new Error(
+      error.message.includes('quota') ? 'API quota exceeded. Check your Google AI Studio account.' :
+      error.message.includes('API key') ? 'Invalid API key.' :
+      error.message.includes('rate_limit') ? 'Rate limit exceeded. Try again later.' :
+      'Failed to generate summary. Please try again.'
+    );
+  }
+}
+
+// Function to handle AI summarization
+async function summarizePage() {
+  // First test the API key
+  const keyTest = await testGeminiKey();
+  if (!keyTest.valid) {
+    console.error('Gemini API Key Test Failed:', keyTest.error);
+    showStatusMessage(`API Error: ${keyTest.error}`, 'error');
+    return;
+  }
+  console.log('Gemini API Key is valid. Using model:', keyTest.model);
+  const button = document.getElementById('summarizeButton');
+  const resultElement = document.getElementById('summaryResult');
+  
+  try {
+    // Show loading state
+    button.disabled = true;
+    showStatusMessage('Generating summary...', 'loading');
+    resultElement.style.display = 'none';
+    
+    // Get the active tab
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab) throw new Error('No active tab found');
+    
+    // Check if API key is set
+    if (!GEMINI_API_KEY || GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY') {
+      throw new Error('Please set your Gemini API key in the popup.js file');
+    }
+    
+    // Extract page content
+    const pageContent = await extractPageContent();
+    if (!pageContent || pageContent.trim().length < 100) {
+      throw new Error('Not enough content on this page to generate a meaningful summary');
+    }
+    
+    // Generate AI summary
+    const summary = await generateAISummary(pageContent, tab.title);
+    
+    // Display the result
+    resultElement.innerHTML = summary.replace(/\n/g, '<br>'); // Convert newlines to <br> for HTML display
+    resultElement.style.display = 'block';
+    showStatusMessage('Summary generated successfully!', 'success');
+    
+  } catch (error) {
+    console.error('Error generating summary:', error);
+    showStatusMessage(`Error: ${error.message}`, 'error');
+  } finally {
+    button.disabled = false;
+  }
+}
+
+// Initialize the popup
+document.addEventListener('DOMContentLoaded', async () => {
   setupTabs();
   setupAnnotationTools();
+  setupApiKeyHandlers();
+  await loadApiKey();
   setupCollapsibleSections();
+  
+  // Add event listener for the summarize button
+  const summarizeButton = document.getElementById('summarizeButton');
+  if (summarizeButton) {
+    summarizeButton.addEventListener('click', summarizePage);
+  }
   
   const highContrastToggle = document.getElementById('highContrast');
   const textSizeSlider = document.getElementById('textSize');
