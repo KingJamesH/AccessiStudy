@@ -8,15 +8,23 @@
 <body class="popup-body">
   <div class="container">
     <div class="header">
-      <h1>[INSERT TITLE]</h1>
+      <h1>Accessibility Tools</h1>
       <label class="theme-toggle" title="Toggle Dark Mode">
         <input type="checkbox" id="darkModeToggle">
-        <span class="theme-icon">
-          <!-- <i class="fas fa-sun"></i>
-          <i class="fas fa-moon"></i> -->
-        </span>
+        <span class="theme-icon"></span>
       </label>
     </div>
+    
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-button active" data-tab="accessibility">Accessibility</button>
+      <button class="tab-button" data-tab="annotation">Annotation</button>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Accessibility Tab -->
+      <div id="accessibility-tab" class="tab-pane active">
     <div class="setting">
       <label>Text Size: <span id="textSizeValue">100%</span></label>
       <input type="range" id="textSize" min="80" max="200" step="5" value="100">
@@ -28,9 +36,9 @@
     </div>
 
     <div class="setting">
-        <label for="lineSpacing">Line Spacing: <span id="lineSpacingValue">100%</span></label>
-        <input type="range" id="lineSpacing" min="1.0" max="3.0" step="0.1" value="1.0">
-      </div>
+      <label for="lineSpacing">Line Spacing: <span id="lineSpacingValue">100%</span></label>
+      <input type="range" id="lineSpacing" min="1.0" max="3.0" step="0.1" value="1.0">
+    </div>
 
     <div class="setting">
       <label>
@@ -40,11 +48,50 @@
     </div>
 
     <div class="setting">
-        <label>
-          <input type="checkbox" id="highContrast">
-          High Contrast Mode
-        </label>
+      <label>
+        <input type="checkbox" id="highContrast">
+        High Contrast Mode
+      </label>
+    </div>
+      
       </div>
+      
+      <!-- Annotation Tab -->
+      <div id="annotation-tab" class="tab-pane">
+        <div class="setting">
+          <h3>Annotation Tools</h3>
+          <div class="annotation-toolbar">
+            <!-- <div class="tool-row">
+              <button id="highlightBtn" title="Highlight" class="tool-btn">
+                <i class="fas fa-highlighter"></i>
+              </button>
+              <button id="underlineBtn" title="Underline" class="tool-btn">
+                <i class="fas fa-underline"></i>
+              </button>
+              <button id="boldBtn" title="Bold" class="tool-btn">
+                <i class="fas fa-bold"></i>
+              </button>
+              <button id="clearFormattingBtn" title="Clear Formatting" class="tool-btn">
+                <i class="fas fa-eraser"></i>
+              </button>
+            </div> -->
+            <div class="tool-row">
+              <button id="addNoteBtn" title="Add Note" class="tool-btn add-note-btn">
+                <i class="fas fa-comment-alt"></i> Add Note
+              </button>
+            </div>
+          </div>
+          
+          <div id="annotations-container">
+            <h4>Your Notes</h4>
+            <div id="status-message" style="display: none; margin: 8px 0; padding: 6px 10px; border-radius: 4px; font-size: 0.9em;"></div>
+            <div id="annotations-list">
+              <!-- Annotations will be listed here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     
     <div class="button-group">
       <button id="applyBtn">Apply Settings</button>

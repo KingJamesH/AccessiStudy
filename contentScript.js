@@ -21,18 +21,291 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
       });
     }
     
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      if (request.action === 'applyAccessibility' && request.settings) {
-        try {
-          applySettingsWithRetry(request.settings);
-          chrome.storage.sync.set(request.settings);
-          sendResponse({status: 'success'});
-        } catch (error) {
-          console.error('Error applying accessibility settings:', error);
-          sendResponse({status: 'error', message: error.message});
+    // Apply annotation to selected text
+    function applyAnnotation(type, color = null) {
+      const selection = window.getSelection();
+      if (selection.rangeCount === 0 || selection.isCollapsed) return false;
+      
+      try {
+        const range = selection.getRangeAt(0);
+        const selectedText = selection.toString().trim();
+        if (!selectedText) return false;
+        
+        // Create a span to wrap the selection
+        const span = document.createElement('span');
+        span.className = `annotation-${type}`;
+        
+        // Apply specific styling based on annotation type
+        switch (type) {
+          case 'highlight':
+            span.style.backgroundColor = color || 'rgba(255, 255, 0, 0.3)';
+            span.style.padding = '0 2px';
+            span.style.borderRadius = '2px';
+            break;
+            
+          case 'underline':
+            span.style.textDecoration = 'underline';
+            span.style.textDecorationThickness = '2px';
+            span.style.textUnderlineOffset = '2px';
+            if (color) span.style.textDecorationColor = color;
+            break;
+            
+          case 'bold':
+            span.style.fontWeight = 'bold';
+            break;
+            
+          case 'note':
+            const noteId = 'note-' + Date.now();
+            span.dataset.noteId = noteId;
+            span.style.borderBottom = `2px dotted ${color || '#2196F3'}`;
+            span.style.position = 'relative';
+            span.style.cursor = 'help';
+            break;
         }
+        
+        // Save the selection
+        range.surroundContents(span);
+        selection.removeAllRanges();
+        
+        return true;
+      } catch (error) {
+        console.error('Error applying annotation:', error);
+        return false;
       }
-      return true; 
+    }
+    
+    // Add a note with tooltip
+    function addNote(annotation) {
+      const selection = window.getSelection();
+      if (selection.rangeCount === 0 || selection.isCollapsed) return false;
+      
+      const range = selection.getRangeAt(0);
+      const selectedText = selection.toString().trim();
+      if (!selectedText) return false;
+      
+      try {
+        const span = document.createElement('span');
+        span.className = 'annotation-note';
+        span.dataset.noteId = annotation.id;
+        span.style.borderBottom = `2px dotted ${annotation.color || '#2196F3'}`;
+        span.style.position = 'relative';
+        span.style.cursor = 'help';
+        
+        // Create tooltip
+        const tooltip = document.createElement('div');
+        tooltip.className = 'annotation-tooltip';
+        tooltip.textContent = annotation.content;
+        tooltip.style.display = 'none';
+        tooltip.style.position = 'absolute';
+        tooltip.style.background = 'white';
+        tooltip.style.border = '1px solid #ddd';
+        tooltip.style.padding = '8px 12px';
+        tooltip.style.borderRadius = '4px';
+        tooltip.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+        tooltip.style.zIndex = '10000';
+        tooltip.style.minWidth = '200px';
+        tooltip.style.maxWidth = '300px';
+        tooltip.style.bottom = '100%';
+        tooltip.style.left = '0';
+        tooltip.style.marginBottom = '5px';
+        tooltip.style.wordBreak = 'break-word';
+        tooltip.style.whiteSpace = 'normal';
+        
+        span.appendChild(tooltip);
+        
+        // Show/hide tooltip on hover
+        span.addEventListener('mouseenter', (e) => {
+          tooltip.style.display = 'block';
+          positionTooltip(tooltip, span);
+        });
+        
+        span.addEventListener('mouseleave', () => {
+          tooltip.style.display = 'none';
+        });
+        
+        // Handle clicks on the note
+        span.addEventListener('click', (e) => {
+          e.stopPropagation();
+          tooltip.style.display = tooltip.style.display === 'none' ? 'block' : 'none';
+          if (tooltip.style.display === 'block') {
+            positionTooltip(tooltip, span);
+          }
+        });
+        
+        // Save the selection
+        range.surroundContents(span);
+        selection.removeAllRanges();
+        
+        return true;
+      } catch (error) {
+        console.error('Error adding note:', error);
+        return false;
+      }
+    }
+    
+    // Position tooltip to ensure it stays within viewport
+    function positionTooltip(tooltip, element) {
+      const rect = element.getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+      
+      let left = rect.left;
+      let top = rect.top - tooltipRect.height - 5;
+      
+      // Adjust if tooltip goes off the left/right of the viewport
+      if (left < 10) {
+        left = 10;
+      } else if (left + tooltipRect.width > window.innerWidth - 10) {
+        left = window.innerWidth - tooltipRect.width - 10;
+      }
+      
+      // If tooltip would go above the viewport, show it below
+      if (top < 10) {
+        top = rect.bottom + 5;
+      }
+      
+      tooltip.style.left = `${left - rect.left}px`;
+      tooltip.style.top = `${top - rect.top}px`;
+    }
+    
+    // Remove annotation by ID
+    function removeAnnotation(id) {
+      const elements = document.querySelectorAll(`[data-note-id="${id}"]`);
+      elements.forEach(el => {
+        const parent = el.parentNode;
+        if (parent) {
+          // Replace the element with its contents
+          while (el.firstChild) {
+            parent.insertBefore(el.firstChild, el);
+          }
+          parent.removeChild(el);
+          parent.normalize(); // Clean up any empty text nodes
+        }
+      });
+    }
+    
+    // Clear formatting from selection
+    function clearFormatting() {
+      const selection = window.getSelection();
+      if (selection.rangeCount === 0 || selection.isCollapsed) return false;
+      
+      const range = selection.getRangeAt(0);
+      const selectedText = selection.toString().trim();
+      if (!selectedText) return false;
+      
+      try {
+        // Create a new range that includes the full elements
+        const ancestor = range.commonAncestorContainer;
+        const startNode = range.startContainer;
+        const endNode = range.endContainer;
+        
+        // Get all elements in the selection
+        const allElements = new Set();
+        let node = startNode;
+        
+        while (node && node !== endNode) {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            allElements.add(node);
+          }
+          node = getNextNode(node);
+        }
+        
+        // Process each element to remove annotation classes
+        allElements.forEach(el => {
+          if (el.classList) {
+            el.classList.remove('annotation-highlight', 'annotation-underline', 'annotation-bold', 'annotation-note');
+            
+            // Remove inline styles that might have been added
+            el.style.removeProperty('background-color');
+            el.style.removeProperty('text-decoration');
+            el.style.removeProperty('font-weight');
+            el.style.removeProperty('border-bottom');
+            
+            // If the element is empty after removing annotations, remove it
+            if (!el.textContent.trim() && el.parentNode) {
+              el.parentNode.removeChild(el);
+            }
+          }
+        });
+        
+        // Clean up any empty parent elements
+        if (ancestor.nodeType === Node.ELEMENT_NODE) {
+          ancestor.normalize();
+        }
+        
+        selection.removeAllRanges();
+        return true;
+      } catch (error) {
+        console.error('Error clearing formatting:', error);
+        return false;
+      }
+    }
+    
+    // Helper function to get the next node in the DOM tree
+    function getNextNode(node) {
+      if (node.firstChild) return node.firstChild;
+      while (node) {
+        if (node.nextSibling) return node.nextSibling;
+        node = node.parentNode;
+      }
+      return null;
+    }
+
+    // Handle messages from the popup
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      try {
+        switch (request.action) {
+          case 'applyAccessibility':
+            if (request.settings) {
+              applySettingsWithRetry(request.settings);
+              chrome.storage.sync.set(request.settings);
+              sendResponse({status: 'success'});
+            }
+            break;
+            
+          case 'applyAnnotation':
+            if (request.type) {
+              const success = applyAnnotation(request.type, request.color);
+              sendResponse({status: success ? 'success' : 'error'});
+            }
+            break;
+            
+          case 'addNote':
+            if (request.annotation) {
+              const success = addNote(request.annotation);
+              sendResponse({status: success ? 'success' : 'error'});
+            }
+            break;
+            
+          case 'removeAnnotation':
+            if (request.id) {
+              removeAnnotation(request.id);
+              sendResponse({status: 'success'});
+            }
+            break;
+            
+          case 'clearFormatting':
+            const success = clearFormatting();
+            sendResponse({status: success ? 'success' : 'error'});
+            break;
+        }
+      } catch (error) {
+        console.error('Error handling message:', error);
+        sendResponse({status: 'error', message: error.message});
+      }
+      
+      return true; // Keep the message channel open for async response
+    });
+    
+    // Load saved annotations when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      // Load saved annotations from storage
+      chrome.storage.sync.get('annotations', (data) => {
+        const annotations = data.annotations || [];
+        annotations.forEach(annotation => {
+          // We don't reapply the annotations here, just store them
+          // They'll be reapplied when the user interacts with the page
+        });
+      });
     });
     
     document.addEventListener('DOMContentLoaded', loadAndApplySettings);

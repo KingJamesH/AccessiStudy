@@ -19,6 +19,10 @@
   --slider-thumb: #4a6fa5;
   --toggle-bg: #e0e0e0;
   --toggle-handle: #ffffff;
+  --tab-active-bg: var(--primary-color);
+  --tab-inactive-bg: var(--secondary-bg);
+  --tab-active-text: #ffffff;
+  --tab-inactive-text: var(--text-color);
 }
 
 [data-theme="dark"] {
@@ -81,12 +85,17 @@ h1 {
 .setting {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 10px;
+  gap: 6px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
   background: var(--card-bg);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px var(--shadow-color);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px var(--shadow-color);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.setting:last-child {
+  margin-bottom: 0;
 }
 
 label {
@@ -109,8 +118,9 @@ input[type="range"] {
 
 .button-group {
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: space-between;
 }
 
 button {
@@ -257,6 +267,245 @@ input:checked + .theme-icon:before {
 
 [data-theme="dark"] .theme-toggle:hover .fa-moon {
   transform: rotate(15deg);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  background: var(--tab-inactive-bg);
+  color: var(--tab-inactive-text);
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tab-button:first-child {
+  border-top-left-radius: 4px;
+}
+
+.tab-button:last-child {
+  border-top-right-radius: 4px;
+}
+
+.tab-button:hover {
+  background: var(--secondary-hover);
+}
+
+.tab-button.active {
+  background: var(--tab-active-bg);
+  color: var(--tab-active-text);
+  border-bottom-color: var(--tab-active-bg);
+}
+
+.tab-pane {
+  display: none;
+  padding: 0.5rem 0;
+  animation: fadeIn 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Annotation Tools */
+.annotation-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 6px 0 8px 0;
+}
+
+.tool-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.tool-btn {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  min-width: 32px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: all 0.15s ease;
+  font-size: 0.9em;
+  padding: 0 8px;
+  white-space: nowrap;
+}
+
+.add-note-btn {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 0 10px;
+}
+
+.tool-btn:hover {
+  background: var(--secondary-hover);
+  transform: translateY(-1px);
+}
+
+.tool-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.color-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 6px 0;
+  font-size: 0.9em;
+}
+
+.color-picker input[type="color"] {
+  width: 40px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--input-bg);
+  cursor: pointer;
+}
+
+#annotations-container {
+  margin-top: 10px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 8px;
+}
+
+#annotations-container h4 {
+  margin: 0 0 6px 0;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+}
+
+#annotations-list {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px;
+  background: var(--card-bg);
+}
+
+.annotation-item {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.annotation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.85em;
+  color: var(--secondary-text);
+}
+
+.annotation-source {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.annotation-source i {
+  color: var(--primary-color);
+  font-size: 0.9em;
+}
+
+.annotation-url {
+  color: var(--primary-color);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.annotation-url:hover {
+  text-decoration: underline;
+}
+
+.annotation-time {
+  font-size: 0.8em;
+  color: var(--secondary-text);
+  white-space: nowrap;
+  margin-left: 8px;
+}
+
+.annotation-item .annotation-text {
+  margin: 8px 0 12px;
+  word-break: break-word;
+  line-height: 1.4;
+  color: var(--text-color);
+  font-size: 0.95em;
+}
+
+.annotation-item .annotation-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.delete-note {
+  background: none;
+  border: none;
+  color: var(--secondary-text);
+  cursor: pointer;
+  padding: 4px;
+  transition: opacity 0.2s;
+}
+
+.annotation-item .delete-note:hover {
+  opacity: 1;
+}
+
+/* Annotation styles that will be applied to selected text */
+.annotation-highlight {
+  background-color: rgba(255, 235, 59, 0.3);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+.annotation-underline {
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+.annotation-bold {
+  font-weight: bold;
 }
 
 .status-message {
