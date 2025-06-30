@@ -8,17 +8,13 @@
 <body class="popup-body">
   <div class="container">
     <div class="header">
-      <h1>Accessibility Tools</h1>
-      <label class="theme-toggle" title="Toggle Dark Mode">
-        <input type="checkbox" id="darkModeToggle">
-        <span class="theme-icon"></span>
-      </label>
+      <h1>AccessiStudy</h1>
     </div>
     
     <!-- Tabs -->
     <div class="tabs">
       <button class="tab-button active" data-tab="accessibility">Accessibility</button>
-      <button class="tab-button" data-tab="annotation">Annotation</button>
+      <button class="tab-button" data-tab="annotation">Notes</button>
     </div>
     
     <!-- Tab Content -->
@@ -53,31 +49,32 @@
         High Contrast Mode
       </label>
     </div>
+    <div class="button-group">
+        <button id="applyBtn">Apply Settings</button>
+        <button id="resetBtn" class="secondary">Reset to Defaults</button>
+    </div>
       
-      </div>
+    </div>
       
       <!-- Annotation Tab -->
       <div id="annotation-tab" class="tab-pane">
         <div class="setting">
-          <h3>Annotation Tools</h3>
+          <h3>Notes</h3>
           <div class="annotation-toolbar">
-            <!-- <div class="tool-row">
-              <button id="highlightBtn" title="Highlight" class="tool-btn">
-                <i class="fas fa-highlighter"></i>
-              </button>
-              <button id="underlineBtn" title="Underline" class="tool-btn">
-                <i class="fas fa-underline"></i>
-              </button>
-              <button id="boldBtn" title="Bold" class="tool-btn">
-                <i class="fas fa-bold"></i>
-              </button>
-              <button id="clearFormattingBtn" title="Clear Formatting" class="tool-btn">
-                <i class="fas fa-eraser"></i>
-              </button>
-            </div> -->
             <div class="tool-row">
-              <button id="addNoteBtn" title="Add Note" class="tool-btn add-note-btn">
-                <i class="fas fa-comment-alt"></i> Add Note
+              <button id="addNoteBtn" class="btn">
+                <i class="fas fa-plus"></i> Add Note
+              </button>
+            </div>
+            <div class="tool-row action-buttons">
+              <button id="downloadNotesBtn" class="btn secondary" title="Download Notes as TXT">
+                <i class="fas fa-download"></i>
+              </button>
+              <button id="openNotesBtn" class="btn secondary" title="Open in New Tab">
+                <i class="fas fa-external-link-alt"></i>
+              </button>
+              <button id="copyNotesBtn" class="btn secondary" title="Copy to Clipboard">
+                <i class="far fa-copy"></i>
               </button>
             </div>
           </div>
@@ -93,10 +90,7 @@
       </div>
     </div>
     
-    <div class="button-group">
-      <button id="applyBtn">Apply Settings</button>
-      <button id="resetBtn" class="secondary">Reset to Defaults</button>
-    </div>
+    
     
     <div id="status" class="status-message" style="display: none;"></div>
   </div>

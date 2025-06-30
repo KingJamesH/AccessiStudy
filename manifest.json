@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Extension",
+    "name": "AccessiStudy",
     "version": "1.0",
-    "description": "Launchacks 2025 [CHANGE]",
+    "description": "Extension for students to improve the accessibility of websites.",
     "permissions": [
       "activeTab",
       "storage",
