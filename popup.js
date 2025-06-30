@@ -961,9 +961,63 @@ async function copyNotesToClipboard() {
 const overlayColorPicker = document.getElementById('overlayColor');
 const overlayOpacitySlider = document.getElementById('overlayOpacity');
 
+// Function to toggle collapsible sections
+function setupCollapsibleSections() {
+  const collapsibles = document.querySelectorAll('.collapsible-section');
+  
+  collapsibles.forEach(section => {
+    const content = section.nextElementSibling;
+    const isExpanded = section.getAttribute('aria-expanded') === 'true';
+    
+    // Set initial state
+    section.setAttribute('aria-expanded', isExpanded);
+    content.style.display = isExpanded ? 'block' : 'none';
+    
+    // Toggle on click
+    section.addEventListener('click', () => {
+      const isExpanded = section.getAttribute('aria-expanded') === 'true';
+      section.setAttribute('aria-expanded', !isExpanded);
+      
+      if (isExpanded) {
+        content.style.display = 'none';
+      } else {
+        content.style.display = 'block';
+      }
+      
+      // Save the state to localStorage
+      const sectionId = section.getAttribute('aria-controls');
+      if (sectionId) {
+        chrome.storage.sync.set({ [sectionId]: !isExpanded });
+      }
+    });
+  });
+  
+  // Load saved states
+  chrome.storage.sync.get(['text-settings', 'display-settings'], (result) => {
+    if (result['text-settings'] !== undefined) {
+      const section = document.querySelector('[aria-controls="text-settings"]');
+      if (section) {
+        section.setAttribute('aria-expanded', result['text-settings']);
+        const content = section.nextElementSibling;
+        content.style.display = result['text-settings'] ? 'block' : 'none';
+      }
+    }
+    
+    if (result['display-settings'] !== undefined) {
+      const section = document.querySelector('[aria-controls="display-settings"]');
+      if (section) {
+        section.setAttribute('aria-expanded', result['display-settings']);
+        const content = section.nextElementSibling;
+        content.style.display = result['display-settings'] ? 'block' : 'none';
+      }
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   setupTabs();
   setupAnnotationTools();
+  setupCollapsibleSections();
   
   const highContrastToggle = document.getElementById('highContrast');
   const textSizeSlider = document.getElementById('textSize');

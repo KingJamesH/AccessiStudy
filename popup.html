@@ -1,53 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Extension Test</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AccessiStudy - Web Accessibility Tools</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body class="popup-body">
   <div class="container">
-    <div class="header">
-      <h1>AccessiStudy</h1>
-    </div>
+    <header class="header">
+      <div class="header-content">
+        <i class="fas fa-universal-access header-icon"></i>
+        <h1>AccessiStudy</h1>
+      </div>
+      <p class="header-subtitle">Accessibility tools to improve learning</p>
+    </header>
     
     <!-- Tabs -->
-    <div class="tabs">
-      <button class="tab-button active" data-tab="accessibility">Accessibility</button>
-      <button class="tab-button" data-tab="annotation">Notes</button>
-    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab-button active" data-tab="accessibility" role="tab" aria-selected="true" aria-controls="accessibility-tab">
+        <i class="fas fa-sliders-h"></i>
+        <span>Accessibility</span>
+      </button>
+      <button class="tab-button" data-tab="annotation" role="tab" aria-selected="false" aria-controls="annotation-tab">
+        <i class="fas fa-sticky-note"></i>
+        <span>Notes</span>
+      </button>
+    </nav>
     
     <!-- Tab Content -->
     <div class="tab-content">
       <!-- Accessibility Tab -->
-      <div id="accessibility-tab" class="tab-pane active">
-    <div class="setting">
-      <label>Text Size: <span id="textSizeValue">100%</span></label>
-      <input type="range" id="textSize" min="80" max="200" step="5" value="100">
-    </div>
-    
-    <div class="setting">
-      <label for="textSpacing">Word Spacing: <span id="textSpacingValue">100%</span></label>
-      <input type="range" id="textSpacing" min="1.0" max="3.0" step="0.1" value="1.0">
-    </div>
+      <div id="accessibility-tab" class="tab-pane active" role="tabpanel" aria-labelledby="accessibility-tab">
+        <button class="collapsible-section" aria-expanded="true" aria-controls="text-settings">
+          <div class="section-header">
+            <i class="fas fa-text-height"></i>
+            <h2>Text Settings</h2>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+        </button>
+        <div id="text-settings" class="section-content" style="display: block;">
+        <div class="setting">
+          <label for="textSize"> <!--text size-->
+            <div class="setting-name-row">
+              <span class="setting-name">Text Size</span>
+              <span class="value-display" id="textSizeValue">100%</span>
+            </div>
+          </label>
+          <input type="range" id="textSize" min="80" max="200" step="5" value="100" aria-label="Adjust text size">
+          <div class="range-labels">
+            <span>A</span>
+            <span>Aa</span>
+            <span>AA</span>
+          </div>
+        </div>
+        
+        <div class="setting">
+          <label for="textSpacing"> <!--letter spacing-->
+            <div class="setting-name-row">
+              <span class="setting-name">Word Spacing</span>
+              <span class="value-display accent" id="textSpacingValue">100%</span>
+            </div>
+          </label>
+          <input type="range" id="textSpacing" min="1.0" max="3.0" step="0.1" value="1.0" aria-label="Adjust word spacing">
+        </div>
 
-    <div class="setting">
-      <label for="lineSpacing">Line Spacing: <span id="lineSpacingValue">100%</span></label>
-      <input type="range" id="lineSpacing" min="1.0" max="3.0" step="0.1" value="1.0">
-    </div>
+        <div class="setting">
+          <label for="lineSpacing"> <!--line spacing-->
+            <div class="setting-name-row">
+              <span class="setting-name">Line Spacing</span>
+              <span class="value-display accent" id="lineSpacingValue">100%</span>
+            </div>
+          </label>
+          <input type="range" id="lineSpacing" min="1.0" max="3.0" step="0.1" value="1.0" aria-label="Adjust line spacing">
+        </div>
 
-    <div class="setting">
-      <label>
-        <input type="checkbox" id="dyslexicFont">
-        Dyslexic-Friendly Font
-      </label>
-    </div>
+        </div>
+        
+        <button class="collapsible-section" aria-expanded="true" aria-controls="display-settings">
+          <div class="section-header">
+            <i class="fas fa-adjust"></i>
+            <h2>Display Settings</h2>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+        </button>
+        <div id="display-settings" class="section-content" style="display: block;">
 
-    <div class="setting">
-      <label>
-        <input type="checkbox" id="highContrast">
-        High Contrast Mode
-      </label>
+        <div class="setting">
+          <label for="dyslexicFont">
+            <div class="setting-name-row">
+              <div>
+                <input type="checkbox" id="dyslexicFont" aria-label="Enable dyslexic-friendly font">
+                <span class="setting-name">Dyslexic-Friendly Font</span>
+              </div>
+            </div>
+            <!-- <span class="setting-hint">OpenDyslexic Font</span> -->
+          </label>
+        </div>
+
+        <div class="setting">
+          <label for="highContrast">
+            <div class="setting-name-row">
+              <div>
+                <input type="checkbox" id="highContrast" aria-label="Enable high contrast mode">
+                <span class="setting-name">High Contrast Mode</span>
+              </div>
+            </div>
+            <!-- <span class="setting-hint">Improves text visibility</span> -->
+          </label>
+        </div>
     </div>
     <div class="button-group">
         <button id="applyBtn">Apply Settings</button>
@@ -56,10 +120,10 @@
       
     </div>
       
-      <!-- Annotation Tab -->
+      <!-- notes tab -->
       <div id="annotation-tab" class="tab-pane">
         <div class="setting">
-          <h3>Notes</h3>
+          <h3 id="notes-title">Notes</h3>
           <div class="annotation-toolbar">
             <div class="tool-row">
               <button id="addNoteBtn" class="btn">
@@ -83,7 +147,6 @@
             <h4>Your Notes</h4>
             <div id="status-message" style="display: none; margin: 8px 0; padding: 6px 10px; border-radius: 4px; font-size: 0.9em;"></div>
             <div id="annotations-list">
-              <!-- Annotations will be listed here -->
             </div>
           </div>
         </div>
