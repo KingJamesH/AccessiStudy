@@ -51,7 +51,7 @@
   flex-direction: column;
   gap: 0;
   position: relative;
-  border-radius: 12px;
+  border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
@@ -201,7 +201,7 @@ input[type="checkbox"]:focus {
 
 /* Accessibility for keyboard users */
 .collapsible-section:focus {
-  outline: 2px solid var(--primary-color);
+  /* outline: 2px solid var(--primary-color); */
   outline-offset: -2px;
   border-radius: 0;
 }
@@ -789,7 +789,7 @@ input[type="checkbox"]:focus-visible {
 
 /* API Key Section Styles */
 .api-key-container {
-  background: var(--card-bg);
+  background: var(--bg-color);
   border-radius: 6px;
   padding: 12px;
   margin: 10px 0;
@@ -936,7 +936,7 @@ input[type="checkbox"]:focus-visible {
 }
 
 .summary-result {
-  background-color: var(--card-bg);
+  background-color: var(--bg-color) !important;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 12px;
@@ -945,7 +945,7 @@ input[type="checkbox"]:focus-visible {
   line-height: 1.5;
   max-height: 200px;
   overflow-y: auto;
-}
+} 
 
 .status-message {
   padding: 10px 12px;
