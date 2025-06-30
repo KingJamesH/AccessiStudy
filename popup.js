@@ -63,7 +63,6 @@ function updateTheme(isDarkMode) {
   }
 }
 
-// Global function to show status messages
 function showStatus(message, isError = false) {
   const statusElement = document.getElementById('status-message');
   if (statusElement) {
@@ -77,28 +76,21 @@ function showStatus(message, isError = false) {
   }
 }
 
-// Global variable to store the annotations list element
 let annotationsList;
 
-// Function to save an annotation to Chrome's sync storage
 async function saveAnnotation(annotation) {
   try {
-    // Get existing annotations
     const data = await chrome.storage.sync.get('annotations');
     const annotations = Array.isArray(data.annotations) ? data.annotations : [];
     
-    // Check if this annotation already exists
     const existingIndex = annotations.findIndex(a => a.id === annotation.id);
     
     if (existingIndex >= 0) {
-      // Update existing annotation
       annotations[existingIndex] = annotation;
     } else {
-      // Add new annotation
       annotations.push(annotation);
     }
     
-    // Save back to storage
     await chrome.storage.sync.set({ annotations });
     console.log('Annotation saved:', annotation.id);
     return annotation;
@@ -165,7 +157,6 @@ function setupTabs() {
       if (pane) {
         pane.classList.add('active');
         
-        // If notes tab is selected, load the annotations
         if (tab.dataset.tab === 'notes') {
           loadAnnotations();
         }
@@ -182,7 +173,6 @@ function setupAnnotationTools() {
   const clearFormattingBtn = document.getElementById('clearFormattingBtn');
   const highlightColor = document.getElementById('highlightColor');
   
-  // Initialize the global annotationsList variable
   annotationsList = document.getElementById('annotations-list');
   
   let currentTool = null;
@@ -230,8 +220,6 @@ function setupAnnotationTools() {
     }
   });
   
-  // showStatus is now in global scope
-  
   async function applyAnnotation(action, annotation = null) {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -242,7 +230,6 @@ function setupAnnotationTools() {
         return;
       }
       
-      // Check if we can access this URL
       try {
         const url = new URL(tab.url);
         const restrictedProtocols = ['chrome:', 'edge:', 'about:', 'chrome-extension:', 'moz-extension:', 'safari-web-extension:'];
@@ -270,24 +257,19 @@ function setupAnnotationTools() {
       }
       
       try {
-        // First try to inject the content script if needed
         try {
           await chrome.scripting.executeScript({
             target: { tabId: tab.id },
             files: ['contentScript.js']
           });
-          // Give it a moment to initialize
           await new Promise(resolve => setTimeout(resolve, 100));
         } catch (injectError) {
           console.warn('Could not inject content script:', injectError);
-          // Continue anyway, the script might already be injected
         }
         
-        // Now try to send the message
         await chrome.tabs.sendMessage(tab.id, message);
       } catch (e) {
         console.warn('Could not communicate with content script:', e);
-        // Don't show an error for this case, as it might be expected
       }
       
       setActiveTool(null);
@@ -409,7 +391,6 @@ function setupAnnotationTools() {
   function handleAnnotationAction(e) {
   setActiveTool(addNoteBtn);
   
-  // Handle note deletion
   document.addEventListener('click', async (e) => {
     if (e.target.closest('.delete-note')) {
       e.preventDefault();
@@ -420,7 +401,6 @@ function setupAnnotationTools() {
         const id = annotationItem.dataset.id;
         if (id && confirm('Are you sure you want to delete this note?')) {
           try {
-            // Remove from the page
             const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
             if (tab?.id) {
               await chrome.tabs.sendMessage(tab.id, {
@@ -431,13 +411,11 @@ function setupAnnotationTools() {
               });
             }
             
-            // Remove from storage
             const data = await chrome.storage.sync.get('annotations');
             const annotations = Array.isArray(data.annotations) ? data.annotations : [];
             const updatedAnnotations = annotations.filter(ann => ann.id !== id);
             await chrome.storage.sync.set({ annotations: updatedAnnotations });
             
-            // Remove from UI
             annotationItem.remove();
             showStatus('Note deleted');
             
@@ -453,7 +431,6 @@ function setupAnnotationTools() {
   
   async function loadAnnotations() {
     try {
-      // Make sure annotationsList is initialized
       if (!annotationsList) {
         annotationsList = document.getElementById('annotations-list');
         if (!annotationsList) {
@@ -462,10 +439,8 @@ function setupAnnotationTools() {
         }
       }
       
-      // Clear existing notes
       annotationsList.innerHTML = '';
       
-      // Show loading indicator
       const loading = document.createElement('div');
       loading.className = 'loading-notes';
       loading.textContent = 'Loading notes...';
@@ -475,9 +450,7 @@ function setupAnnotationTools() {
       annotationsList.appendChild(loading);
       
       try {
-        // Get notes from storage
         function saveAnnotation(annotation) {
-          // Ensure the annotation has all required fields
           const annotationToSave = {
             id: annotation.id || `note-${Date.now()}`,
             text: annotation.text || '',
@@ -539,11 +512,9 @@ function setupAnnotationTools() {
         const data = await chrome.storage.sync.get('annotations');
         const annotations = Array.isArray(data.annotations) ? data.annotations : [];
         
-        // Clear loading indicator
         annotationsList.innerHTML = '';
         
         if (annotations.length === 0) {
-          // Show a message when there are no notes
           const noNotes = document.createElement('div');
           noNotes.className = 'no-notes';
           noNotes.textContent = 'No notes found. Select text and click "Add Note" to create one.';
@@ -552,7 +523,6 @@ function setupAnnotationTools() {
           noNotes.style.color = 'var(--secondary-text)';
           annotationsList.appendChild(noNotes);
         } else {
-          // Add all notes to the list
           annotations.forEach(annotation => addAnnotationToList(annotation));
           showStatus(`Loaded ${annotations.length} note${annotations.length !== 1 ? 's' : ''}`);
         }
@@ -573,12 +543,10 @@ function setupAnnotationTools() {
     }
     
     try {
-      // Create a new annotation item
       const annotationItem = document.createElement('div');
       annotationItem.className = 'annotation-item';
       annotationItem.dataset.id = annotation.id;
       
-      // Format the date
       const date = new Date(annotation.timestamp || Date.now());
       const formattedDate = date.toLocaleString(undefined, {
         year: 'numeric',
@@ -588,12 +556,10 @@ function setupAnnotationTools() {
         minute: '2-digit'
       });
       
-      // Get page title and URL for display
       const pageTitle = annotation.title || 'Current page';
       const pageUrl = annotation.url || '';
       const noteText = annotation.text || annotation.content || 'No content';
       
-      // Set the content of the annotation item with the original styling and trash icon
       annotationItem.innerHTML = `
         <div class="annotation-header">
           <div class="annotation-source">
@@ -615,7 +581,6 @@ function setupAnnotationTools() {
         </div>
       `;
       
-      // Add to the top of the list
       if (annotationsList.firstChild) {
         annotationsList.insertBefore(annotationItem, annotationsList.firstChild);
       } else {
@@ -703,11 +668,9 @@ function setupAnnotationTools() {
 
 async function getAllNotes() {
   try {
-    // First get notes from storage
     const data = await chrome.storage.sync.get('annotations');
     let storedNotes = Array.isArray(data.annotations) ? data.annotations : [];
     
-    // Process stored notes to ensure they have all required fields
     const processedNotes = storedNotes.map(note => ({
       id: note.id || `note-${Date.now()}`,
       text: note.text || note.content || '',
@@ -715,11 +678,9 @@ async function getAllNotes() {
       timestamp: note.timestamp || new Date().toISOString(),
       url: note.url || '',
       title: note.title || 'Untitled Note',
-      // Preserve any additional properties
       ...note
     }));
     
-    // Then try to get notes from the current page
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (tab?.id) {
@@ -728,7 +689,6 @@ async function getAllNotes() {
           const restrictedProtocols = ['chrome:', 'edge:', 'about:', 'chrome-extension:', 'moz-extension:', 'safari-web-extension:'];
           
           if (!restrictedProtocols.includes(url.protocol)) {
-            // Try to get notes from the page
             const result = await chrome.scripting.executeScript({
               target: { tabId: tab.id },
               function: () => {
@@ -749,10 +709,8 @@ async function getAllNotes() {
             
             const pageNotes = result[0]?.result || [];
             
-            // Merge page notes with stored notes, preferring page versions
             const mergedNotes = [...pageNotes];
             
-            // Add stored notes that aren't already in the page notes
             processedNotes.forEach(storedNote => {
               if (!mergedNotes.some(note => note.id === storedNote.id)) {
                 mergedNotes.push(storedNote);
@@ -769,7 +727,6 @@ async function getAllNotes() {
       console.warn('Could not access tab info:', e);
     }
     
-    // If we couldn't get page notes, just return processed stored notes
     return processedNotes;
     
   } catch (error) {
@@ -779,7 +736,6 @@ async function getAllNotes() {
   }
 }
 
-// Download notes as TXT file
 async function downloadNotesAsTxt() {
   const notes = await getAllNotes();
   if (notes.length === 0) {
@@ -961,7 +917,6 @@ async function copyNotesToClipboard() {
 const overlayColorPicker = document.getElementById('overlayColor');
 const overlayOpacitySlider = document.getElementById('overlayOpacity');
 
-// Function to toggle collapsible sections
 function setupCollapsibleSections() {
   const collapsibles = document.querySelectorAll('.collapsible-section');
   
@@ -969,11 +924,9 @@ function setupCollapsibleSections() {
     const content = section.nextElementSibling;
     const isExpanded = section.getAttribute('aria-expanded') === 'true';
     
-    // Set initial state
     section.setAttribute('aria-expanded', isExpanded);
     content.style.display = isExpanded ? 'block' : 'none';
     
-    // Toggle on click
     section.addEventListener('click', () => {
       const isExpanded = section.getAttribute('aria-expanded') === 'true';
       section.setAttribute('aria-expanded', !isExpanded);
@@ -984,7 +937,6 @@ function setupCollapsibleSections() {
         content.style.display = 'block';
       }
       
-      // Save the state to localStorage
       const sectionId = section.getAttribute('aria-controls');
       if (sectionId) {
         chrome.storage.sync.set({ [sectionId]: !isExpanded });
@@ -992,7 +944,6 @@ function setupCollapsibleSections() {
     });
   });
   
-  // Load saved states
   chrome.storage.sync.get(['text-settings', 'display-settings'], (result) => {
     if (result['text-settings'] !== undefined) {
       const section = document.querySelector('[aria-controls="text-settings"]');
@@ -1014,7 +965,6 @@ function setupCollapsibleSections() {
   });
 }
 
-// Function to show status message
 function showStatusMessage(message, type = 'info') {
   const statusElement = document.getElementById('summaryStatus');
   statusElement.textContent = message;
@@ -1022,7 +972,6 @@ function showStatusMessage(message, type = 'info') {
   statusElement.classList.add(type);
   statusElement.style.display = 'block';
   
-  // Hide status after 5 seconds if it's not an error
   if (type !== 'error') {
     setTimeout(() => {
       if (statusElement.textContent === message) {
@@ -1032,11 +981,9 @@ function showStatusMessage(message, type = 'info') {
   }
 }
 
-// Configuration for Google's Gemini API
-let GEMINI_API_KEY = ''; // Will be loaded from storage
+let GEMINI_API_KEY = ''; 
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent';
 
-// Toggle between API key and summarize sections
 function toggleSections(hasApiKey) {
   const apiKeySection = document.getElementById('apiKeySection');
   const summarizeSection = document.getElementById('summarizeSection');
@@ -1050,7 +997,6 @@ function toggleSections(hasApiKey) {
   }
 }
 
-// Load API key from storage and update UI
 async function loadApiKey() {
   try {
     const result = await chrome.storage.sync.get(['geminiApiKey']);
@@ -1067,7 +1013,6 @@ async function loadApiKey() {
   }
 }
 
-// Save API key to storage
 async function saveApiKey(key) {
   if (!key.trim()) {
     showStatusMessage('Please enter an API key', 'error');
@@ -1075,7 +1020,6 @@ async function saveApiKey(key) {
   }
   
   try {
-    // Show loading state
     const statusElement = document.getElementById('apiKeyStatus');
     if (statusElement) {
       statusElement.textContent = 'Validating API key...';
@@ -1083,9 +1027,8 @@ async function saveApiKey(key) {
       statusElement.className = 'status-message info';
     }
     
-    // Test the API key with a short timeout
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 10000); 
     
     const testUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=${key}`;
     const response = await fetch(testUrl, {
@@ -1117,7 +1060,6 @@ async function saveApiKey(key) {
       throw new Error(errorMessage);
     }
     
-    // Save the key if test passes
     await chrome.storage.sync.set({ geminiApiKey: key });
     GEMINI_API_KEY = key;
     
@@ -1139,7 +1081,6 @@ async function saveApiKey(key) {
     statusElement.className = 'status-message error';
     statusElement.style.display = 'block';
     
-    // Add status element if it doesn't exist
     if (!document.getElementById('apiKeyStatus')) {
       const apiKeyContainer = document.querySelector('.api-key-container');
       if (apiKeyContainer) {
@@ -1151,26 +1092,22 @@ async function saveApiKey(key) {
   }
 }
 
-// Setup API key input handler
 function setupApiKeyHandlers() {
   const apiKeyInput = document.getElementById('apiKey');
   const saveButton = document.getElementById('saveApiKey');
   const changeApiKeyBtn = document.getElementById('changeApiKey');
   
-  // Save on button click
   saveButton.addEventListener('click', async () => {
     const key = apiKeyInput.value.trim();
     await saveApiKey(key);
   });
   
-  // Also save on Enter key
   apiKeyInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
       saveButton.click();
     }
   });
   
-  // Handle change API key
   changeApiKeyBtn?.addEventListener('click', () => {
     chrome.storage.sync.remove('geminiApiKey');
     GEMINI_API_KEY = '';
@@ -1180,7 +1117,6 @@ function setupApiKeyHandlers() {
   });
 }
 
-// Function to test Gemini API key
 async function testGeminiKey() {
   try {
     console.log('Testing Gemini API key...');
@@ -1221,7 +1157,6 @@ async function testGeminiKey() {
   }
 }
 
-// Generate summary using Gemini API
 async function generateAISummary(content, title) {
   if (!GEMINI_API_KEY) {
     showStatusMessage('Please set your Gemini API key in the settings', 'error');
@@ -1230,7 +1165,7 @@ async function generateAISummary(content, title) {
   }
 
   try {
-    const prompt = `Summarize this web page in one paragraph (2-4 sentences):
+    const prompt = `Summarize this web page in one paragraph (2-3 sentences):
     Title: ${title}
     Content: ${content.substring(0, 25000)}`;
 
@@ -1261,9 +1196,7 @@ async function generateAISummary(content, title) {
   }
 }
 
-// Function to handle AI summarization
 async function summarizePage() {
-  // First test the API key
   const keyTest = await testGeminiKey();
   if (!keyTest.valid) {
     console.error('Gemini API Key Test Failed:', keyTest.error);
@@ -1275,31 +1208,25 @@ async function summarizePage() {
   const resultElement = document.getElementById('summaryResult');
   
   try {
-    // Show loading state
     button.disabled = true;
     showStatusMessage('Generating summary...', 'loading');
     resultElement.style.display = 'none';
     
-    // Get the active tab
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (!tab) throw new Error('No active tab found');
     
-    // Check if API key is set
     if (!GEMINI_API_KEY || GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY') {
       throw new Error('Please set your Gemini API key in the popup.js file');
     }
     
-    // Extract page content
     const pageContent = await extractPageContent();
     if (!pageContent || pageContent.trim().length < 100) {
       throw new Error('Not enough content on this page to generate a meaningful summary');
     }
     
-    // Generate AI summary
     const summary = await generateAISummary(pageContent, tab.title);
     
-    // Display the result
-    resultElement.innerHTML = summary.replace(/\n/g, '<br>'); // Convert newlines to <br> for HTML display
+    resultElement.innerHTML = summary.replace(/\n/g, '<br>'); 
     resultElement.style.display = 'block';
     showStatusMessage('Summary generated successfully!', 'success');
     
@@ -1311,7 +1238,6 @@ async function summarizePage() {
   }
 }
 
-// Initialize the popup
 document.addEventListener('DOMContentLoaded', async () => {
   setupTabs();
   setupAnnotationTools();
@@ -1319,7 +1245,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadApiKey();
   setupCollapsibleSections();
   
-  // Add event listener for the summarize button
   const summarizeButton = document.getElementById('summarizeButton');
   if (summarizeButton) {
     summarizeButton.addEventListener('click', summarizePage);
@@ -1353,15 +1278,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 //     }
 //   };
   
-//   // Initialize dark mode
 //   initializeDarkMode();
   
-  // Add event listeners for note actions
   document.getElementById('downloadNotesBtn')?.addEventListener('click', downloadNotesAsTxt);
   document.getElementById('openNotesBtn')?.addEventListener('click', openNotesInNewTab);
   document.getElementById('copyNotesBtn')?.addEventListener('click', copyNotesToClipboard);
   
-//   // Toggle dark mode
 //   darkModeToggle.addEventListener('change', (e) => {
 //     const isDarkMode = e.target.checked;
 //     updateTheme(isDarkMode);
