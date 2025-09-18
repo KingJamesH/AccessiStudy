@@ -57,7 +57,7 @@
 }
 
 .header {
-  padding: 22px 20px 18px;
+  padding: 14px 16px 10px;
   background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
   color: white;
   text-align: center;
@@ -68,25 +68,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 4px;
+  gap: 8px;
+  margin-bottom: 2px;
 }
 
 .header-icon {
-  font-size: 20px;
+  font-size: 18px;
   opacity: 0.9;
 }
 
 .header-subtitle {
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   opacity: 0.9;
   font-weight: 400;
   letter-spacing: 0.3px;
 }
 
 h1 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   margin: 0;
   color: white;
@@ -98,8 +98,8 @@ h1 {
 .setting {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 16px 20px;
+  gap: 6px;
+  padding: 10px 14px;
   background: var(--card-bg);
   border-bottom: 1px solid var(--border-color);
   transition: all var(--transition-speed) var(--transition-easing);
@@ -117,10 +117,10 @@ h1 {
 label {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   cursor: pointer;
   width: 100%;
-  padding: 4px 0;
+  padding: 2px 0;
 }
 
 .setting-name-row {
@@ -135,8 +135,8 @@ label {
   /* color: var(--primary-color); */
   color: white !important;
   font-weight: 500;
-  font-size: 14px;
-  margin-left: 8px;
+  font-size: 13px;
+  margin-left: 6px;
   line-height: 1.4;
   display: inline-block;
   vertical-align: middle;
@@ -223,7 +223,7 @@ input[type="checkbox"]:focus {
 }
 
 .collapsible-section .section-header {
-  padding: 16px 20px;
+  padding: 10px 14px;
   margin: 0;
   border: none;
   width: 100%;
@@ -232,10 +232,10 @@ input[type="checkbox"]:focus {
 .section-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: transparent;
   border: none;
-  padding: 16px 20px 12px;
+  padding: 10px 14px 8px;
   margin: 0;
   position: relative;
 }
@@ -243,7 +243,7 @@ input[type="checkbox"]:focus {
 .section-header i.fa-chevron-down {
   margin-left: auto;
   transition: transform 0.2s ease;
-  font-size: 12px;
+  font-size: 11px;
   opacity: 0.7;
 }
 
@@ -265,7 +265,7 @@ input[type="checkbox"]:focus {
 }
 
 .section-header h2 {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   margin: 0;
   color: var(--text-color);
@@ -275,14 +275,14 @@ input[type="checkbox"]:focus {
 
 .section-header i {
   color: var(--primary-color);
-  font-size: 14px;
-  width: 20px;
+  font-size: 12px;
+  width: 16px;
   text-align: center;
 }
 
 .value-display {
   display: inline-block;
-  min-width: 40px;
+  min-width: 36px;
   text-align: right;
   font-weight: 600;
   /* color: var(--accent-color); */
@@ -299,9 +299,9 @@ input[type="checkbox"]:focus {
 .range-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--secondary-text);
-  margin-top: 4px;
+  margin-top: 2px;
   padding: 0 2px;
 }
 
@@ -325,10 +325,10 @@ input[type="checkbox"] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border: 2px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 4px;
   background-color: var(--input-bg);
   cursor: pointer;
   position: relative;
@@ -366,11 +366,11 @@ input[type="range"] {
   -moz-appearance: none;
   appearance: none;
   width: 100%;
-  height: 6px;
-  border-radius: 3px;
+  height: 4px;
+  border-radius: 2px;
   background: var(--slider-bg);
   outline: none;
-  margin: 10px 0;
+  margin: 6px 0;
   transition: all var(--transition-speed) var(--transition-easing);
 }
 
@@ -381,8 +381,8 @@ input[type="range"]:hover {
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: var(--primary-color);
   cursor: pointer;
@@ -411,8 +411,8 @@ input[type="range"]:active::-webkit-slider-thumb {
 
 .button-group {
   display: flex;
-  gap: 8px;
-  margin: 8px 12px 8px 12px;
+  gap: 6px;
+  margin: 2px 10px 6px 10px;
   justify-content: space-between;
   padding: 0 4px;
 }
@@ -422,17 +422,17 @@ button {
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.3px;
   transition: all var(--transition-speed) var(--transition-easing);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 button:hover {
@@ -477,13 +477,13 @@ button:disabled {
 
 .tab-button {
   flex: 1;
-  padding: 14px 16px;
+  padding: 10px 12px;
   background: transparent;
   color: var(--tab-inactive-text);
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -641,16 +641,16 @@ input[type="checkbox"]:focus-visible {
   background: var(--secondary-bg);
   border: 1px solid var(--border-color);
   /* border-radius: 4px; */
-  min-width: 32px;
-  height: 28px;
+  min-width: 28px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: var(--text-color);
   transition: all 0.15s ease;
-  font-size: 0.9em;
-  padding: 0 8px;
+  font-size: 0.85em;
+  padding: 0 6px;
   white-space: nowrap;
 }
 
@@ -675,38 +675,38 @@ input[type="checkbox"]:focus-visible {
 .color-picker {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin: 4px 0 6px 0;
+  gap: 4px;
+  margin: 2px 0 4px 0;
   font-size: 0.9em;
 }
 
 #annotations-container {
-  margin-top: 10px;
+  margin-top: 8px;
   border-top: 1px solid var(--border-color);
-  padding-top: 8px;
+  padding-top: 6px;
 }
 
 #annotations-container h4 {
-  margin: 0 0 6px 0;
+  margin: 0 0 4px 0;
   color: var(--primary-color);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 #annotations-list {
   max-height: 200px;
   overflow-y: auto;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 8px;
+  border-radius: 4px;
+  padding: 6px;
   background: var(--card-bg);
 }
 
 .annotation-item {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 10px;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 8px;
   transition: all 0.2s ease;
   position: relative;
 }
@@ -715,7 +715,7 @@ input[type="checkbox"]:focus-visible {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-size: 0.85em;
   color: var(--secondary-text);
 }
@@ -747,18 +747,18 @@ input[type="checkbox"]:focus-visible {
 }
 
 .annotation-time {
-  font-size: 0.8em;
+  font-size: 0.75em;
   color: var(--secondary-text);
   white-space: nowrap;
   margin-left: 8px;
 }
 
 .annotation-item .annotation-text {
-  margin: 8px 0 12px;
+  margin: 6px 0 8px;
   word-break: break-word;
   line-height: 1.4;
   color: var(--text-color);
-  font-size: 0.95em;
+  font-size: 0.9em;
 }
 
 .annotation-item .annotation-actions {
@@ -791,8 +791,8 @@ input[type="checkbox"]:focus-visible {
 .api-key-container {
   background: var(--bg-color);
   border-radius: 6px;
-  padding: 12px;
-  margin: 10px 0;
+  padding: 10px;
+  margin: 8px 0;
   border: 1px solid var(--border-color);
 }
 
@@ -843,18 +843,18 @@ input[type="checkbox"]:focus-visible {
 /* API Key Input Styles */
 .input-with-button {
   display: flex;
-  gap: 8px;
-  margin-top: 6px;
+  gap: 6px;
+  margin-top: 4px;
 }
 
 #apiKey {
   flex: 1;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   background-color: var(--input-bg);
   color: var(--text-color);
-  font-size: 14px;
+  font-size: 13px;
   transition: border-color 0.2s ease;
 }
 
@@ -865,13 +865,13 @@ input[type="checkbox"]:focus-visible {
 }
 
 #saveApiKey {
-  padding: 0 12px;
+  padding: 0 10px;
   background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   transition: background-color 0.2s ease;
   white-space: nowrap;
@@ -910,8 +910,8 @@ input[type="checkbox"]:focus-visible {
   color: white;
   border: none;
   border-radius: 6px;
-  padding: 10px 15px;
-  font-size: 14px;
+  padding: 8px 12px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   display: flex;
@@ -939,19 +939,18 @@ input[type="checkbox"]:focus-visible {
   background-color: var(--bg-color) !important;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  padding: 12px;
-  margin-top: 10px;
-  font-size: 14px;
+  padding: 10px;
+  margin-top: 8px;
+  font-size: 13px;
   line-height: 1.5;
   max-height: 200px;
   overflow-y: auto;
 } 
 
 .status-message {
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: 6px;
-  margin: 8px 0;
-  font-size: 13px;
+  margin: 6px 0;
   line-height: 1.4;
   display: none;
   animation: fadeIn 0.3s ease-out;
@@ -1129,4 +1128,83 @@ h3 {
   font-size: 0.95rem;
   color: var(--text-color);
   font-weight: 600;
+}
+
+/* Compact density specifically for Text and Display settings */
+#text-settings .setting,
+#display-settings .setting {
+  padding: 6px 10px;
+  gap: 4px;
+}
+
+#display-settings .setting:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+#display-settings {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Ensure the buttons sit closer to Display Settings, even if sections exist between */
+#display-settings ~ .button-group {
+  margin-top: 0 !important;
+}
+
+/* Also collapse any residual padding/margin on the section content container */
+#display-settings.section-content {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Override inline margins on following sections to eliminate the perceived bottom padding */
+#apiKeySection {
+  margin-top: 4px !important;
+}
+
+#summarizeSection {
+  margin-top: 4px !important;
+}
+
+#text-settings .setting .setting-name,
+#display-settings .setting .setting-name {
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+#text-settings .setting .setting-name-row,
+#display-settings .setting .setting-name-row {
+  min-height: 20px;
+}
+
+#text-settings .setting .value-display,
+#display-settings .setting .value-display {
+  min-width: 32px;
+  font-size: 12px;
+}
+
+#text-settings .setting input[type="range"],
+#display-settings .setting input[type="range"] {
+  height: 3px;
+  margin: 4px 0;
+}
+
+#text-settings .setting input[type="range"]::-webkit-slider-thumb,
+#display-settings .setting input[type="range"]::-webkit-slider-thumb {
+  width: 12px;
+  height: 12px;
+}
+
+#text-settings .range-labels,
+#display-settings .range-labels {
+  font-size: 10px;
+  margin-top: 0;
+  padding: 0;
+}
+
+#display-settings .setting input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
 }

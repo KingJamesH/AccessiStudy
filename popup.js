@@ -1260,7 +1260,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const lineSpacingValue = document.getElementById('lineSpacingValue');
   const overlayColorPicker = document.getElementById('overlayColor');
   const overlayOpacitySlider = document.getElementById('overlayOpacity');
-  const applyBtn = document.getElementById('applyBtn');
   const resetBtn = document.getElementById('resetBtn');
   const statusEl = document.getElementById('status');
 //   const darkModeToggle = document.getElementById('darkModeToggle');
@@ -1348,49 +1347,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
   
-  applyBtn.addEventListener('click', async () => {
-    const textSpacingValue = parseFloat(textSpacingSlider.value);
-    console.log('Text Spacing Value:', textSpacingValue); 
-    
-    const settings = {
-      highContrast: highContrastToggle.checked,
-      textSize: parseInt(textSizeSlider.value),
-      dyslexicFont: dyslexicFontToggle.checked,
-      textSpacing: parseFloat(textSpacingSlider.value),
-      lineSpacing: parseFloat(lineSpacingSlider.value),
-      ...(overlayColorPicker && { overlayColor: overlayColorPicker.value }),
-      ...(overlayOpacitySlider && { overlayOpacity: parseFloat(overlayOpacitySlider.value) })
-    };
-    
-    if (statusEl) {
-      statusEl.textContent = 'Applying settings...';
-      statusEl.className = 'status-message info show';
-    }
-    
-    try {
-      await chrome.storage.sync.set(settings);
-      
-      const success = await injectAndSendMessage(settings);
-      
-      if (success) {
-        if (statusEl) {
-          statusEl.textContent = 'Settings applied successfully!';
-          statusEl.className = 'status-message success show';
-        }
-      } else {
-        throw new Error('Failed to apply settings');
-      }
-    } catch (error) {
-      console.error('Error applying settings:', error);
-      if (statusEl) {
-        statusEl.textContent = 'Error applying settings. Please try again.';
-        statusEl.className = 'status-message error show';
-      }
-      return; 
-    }
-    
-    // Keep popup open after applying settings
-  });
+  // Apply Settings button removed; all changes now auto-apply in real time
   
   resetBtn.addEventListener('click', async () => {
     // Set default values in the UI
@@ -1465,8 +1422,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       textSize: parseInt(textSizeSlider.value),
       dyslexicFont: dyslexicFontToggle.checked,
       textSpacing: parseFloat(textSpacingSlider.value),
-      overlayColor: overlayColorPicker.value,
-      overlayOpacity: parseFloat(overlayOpacitySlider.value)
+      lineSpacing: parseFloat(lineSpacingSlider.value),
+      ...(overlayColorPicker && { overlayColor: overlayColorPicker.value }),
+      ...(overlayOpacitySlider && { overlayOpacity: parseFloat(overlayOpacitySlider.value) })
     };
     
     try {

@@ -481,14 +481,11 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
         document.head.appendChild(styleElement);
       }
       
-      const sizeMultiplier = settings.textSize / 100;
+      // Use page zoom to preserve all relative font-size hierarchies and px-based sizes
+      // while scaling the overall page in Chrome.
+      const scale = Math.max(0.5, Math.min(2.5, parseInt(settings.textSize, 10) / 100));
       styleElement.textContent = `
-        body {
-          font-size: ${sizeMultiplier}em !important;
-        }
-        body * {
-          font-size: inherit !important;
-        }
+        html { zoom: ${scale} !important; }
       `;
     } else {
       const styleElement = document.getElementById('accessibility-text-size');
@@ -592,33 +589,23 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
                  'letter:', letterSpacing, 'word:', wordSpacing, 'line:', lineHeight);
       
       const css = `
-        /* Base line height for the document */
-        html, body {
-          line-height: ${lineHeight} !important;
-        }
-        
-        /* Apply to all text elements, including when dyslexic font is enabled */
-        body *,
-        .accessibility-dyslexic * {
-          letter-spacing: ${letterSpacing}em !important;
-          word-spacing: ${wordSpacing}em !important;
-          line-height: ${lineHeight} !important;
-        }
-        
-        /* More specific targeting for common text containers */
-        p, h1, h2, h3, h4, h5, h6, div, span, a, li, td, th, label,
-        input, textarea, select, button, figcaption, blockquote, cite,
+        /* Apply spacing to common body text elements; avoid forcing headings */
+        p, div, span, a, li, td, th, label,
+        figcaption, blockquote, cite,
         article, section, header, footer, nav, aside, main, figure, 
         time, mark, small, strong, em, i, b, u, sub, sup, code, pre, 
-        kbd, samp, var, dfn, abbr, q, blockquote, address, dt, dd, 
-        ol, ul, dl, table, caption, thead, tbody, tfoot, tr, td, th,
-        fieldset, legend, details, summary, menu, menuitem, 
-        [role="heading"], [role="paragraph"], [role="listitem"],
+        kbd, samp, var, dfn, abbr, q, address, dt, dd, 
+        ol, ul, dl, table, caption, thead, tbody, tfoot, tr, fieldset, legend,
+        details, summary, menu, menuitem, [role="paragraph"], [role="listitem"],
         [role="term"], [role="definition"], [role="text"] {
           letter-spacing: ${letterSpacing}em !important;
           word-spacing: ${wordSpacing}em !important;
           line-height: ${lineHeight} !important;
         }
+        
+        /* Preserve relative prominence of headings by not overriding their line-height */
+        /* You can optionally add milder spacing for headings if desired */
+        /* h1, h2, h3, h4, h5, h6 { line-height: ${Math.max(1.1, Math.min(1.6, lineHeight))} !important; } */
         
         input, textarea, select, button {
           padding: 0.5em !important;
@@ -629,15 +616,14 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
           word-spacing: ${wordSpacing}em !important;
         }
         
-        /* Force text rendering for better compatibility - target text elements specifically */
-        p, h1, h2, h3, h4, h5, h6, div, span, a, li, td, th, label,
-        input, textarea, select, button, figcaption, blockquote, cite,
+        /* Enhance text rendering for common text elements (excluding headings) */
+        p, div, span, a, li, td, th, label,
+        figcaption, blockquote, cite,
         article, section, header, footer, nav, aside, main, figure, 
         time, mark, small, strong, em, i, b, u, sub, sup, code, pre, 
-        kbd, samp, var, dfn, abbr, q, blockquote, address, dt, dd, 
-        ol, ul, dl, table, caption, thead, tbody, tfoot, tr, td, th,
-        fieldset, legend, details, summary, menu, menuitem, 
-        [role="heading"], [role="paragraph"], [role="listitem"],
+        kbd, samp, var, dfn, abbr, q, address, dt, dd, 
+        ol, ul, dl, table, caption, thead, tbody, tfoot, tr, fieldset, legend,
+        details, summary, menu, menuitem, [role="paragraph"], [role="listitem"],
         [role="term"], [role="definition"], [role="text"] {
           text-rendering: optimizeLegibility !important;
           -webkit-font-smoothing: antialiased !important;
