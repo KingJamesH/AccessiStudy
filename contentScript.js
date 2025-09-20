@@ -12,14 +12,9 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
       }
     }
 
-    function loadAndApplySettings() {
-      chrome.storage.sync.get(null, (settings) => {
-        if (Object.keys(settings).length > 0) {
-          console.log('Loading saved settings:', settings);
-          applySettingsWithRetry(settings);
-        }
-      });
-    }
+    // Removed auto-load of settings from storage to ensure the extension
+    // does NOT auto-apply on every page. Settings are now applied only
+    // when the user clicks Apply in the popup (via message).
     
     // Apply annotation to selected text
     function applyAnnotation(type, color = null) {
@@ -256,8 +251,8 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
         switch (request.action) {
           case 'applyAccessibility':
             if (request.settings) {
+              // Apply only when messaged by the popup. Do not persist here.
               applySettingsWithRetry(request.settings);
-              chrome.storage.sync.set(request.settings);
               sendResponse({status: 'success'});
             }
             break;
@@ -297,24 +292,12 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
     });
     
     // Load saved annotations when the page loads
+    // Keep annotations load minimal; no auto-applying of styles.
     document.addEventListener('DOMContentLoaded', () => {
-      // Load saved annotations from storage
-      chrome.storage.sync.get('annotations', (data) => {
-        const annotations = data.annotations || [];
-        annotations.forEach(annotation => {
-          // We don't reapply the annotations here, just store them
-          // They'll be reapplied when the user interacts with the page
-        });
-      });
+      chrome.storage.sync.get('annotations', () => {});
     });
     
-    document.addEventListener('DOMContentLoaded', loadAndApplySettings);
-    
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', loadAndApplySettings);
-    } else {
-      loadAndApplySettings();
-    }
+    // Intentionally do not auto-apply on DOMContentLoaded.
   
     chrome.runtime.sendMessage({action: 'contentScriptReady'});
   }
@@ -476,7 +459,7 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
       let styleElement = document.getElementById(styleId);
       
       if (!styleElement) {
-        styleElement = document.createElement('style');
+        styleElement = document.createElement('style'); 
         styleElement.id = styleId;
         document.head.appendChild(styleElement);
       }
@@ -495,7 +478,7 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
     }
   
     let dyslexicStyle = document.getElementById('accessibility-dyslexic-font');
-    
+     
     if (settings.dyslexicFont) {
       if (!dyslexicStyle) {
         dyslexicStyle = document.createElement('style');
@@ -666,8 +649,4 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
     }
   }
   
-  chrome.storage.sync.get(null, (settings) => {
-    if (Object.keys(settings).length > 0) {
-      applyAccessibilitySettings(settings);
-    }
-  });
+  // Do not auto-apply settings from storage on script load.

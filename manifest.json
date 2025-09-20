@@ -10,7 +10,6 @@
       "webRequest"
     ],
     "host_permissions": [
-      "<all_urls>",
       "https://generativelanguage.googleapis.com/*"
     ],
     "content_security_policy": {
@@ -33,13 +32,6 @@
     "background": {
       "service_worker": "background.js"
     },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["contentScript.js"],
-        "css": ["styles.css"],
-        "run_at": "document_end"
-      }
-    ]
+    "content_scripts": []
   }
   

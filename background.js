@@ -23,14 +23,5 @@ chrome.runtime.onInstalled.addListener(() => {
     return true;
   });
   
-  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete' && tab.active) {
-      chrome.storage.sync.get(null, (settings) => {
-        chrome.tabs.sendMessage(tabId, {
-          action: 'applyAccessibility',
-          settings: settings
-        });
-      });
-    }
-  });
-  
+  // Do NOT auto-apply settings on every page load.
+// We only apply when the user explicitly clicks Apply in the popup.

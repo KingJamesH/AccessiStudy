@@ -10,13 +10,15 @@ async function sendSettingsToContent(settings, retries = 3) {
         });
         return true;
       } catch (error) {
-        if (retries > 0 && error.message.includes('receiving end')) {
+        const msg = (error && error.message) ? error.message : String(error);
+        if (retries > 0 && (msg.includes('receiving end') || msg.includes('Could not establish connection'))) {
           console.log(`Content script not ready, injecting and retrying... (${retries} attempts left)`);
           await chrome.scripting.executeScript({
             target: {tabId: tab.id},
             files: ['contentScript.js']
           });
-          await new Promise(resolve => setTimeout(resolve, 200));
+          // Give the script a bit more time to initialize before retrying
+          await new Promise(resolve => setTimeout(resolve, 400));
           return sendSettingsToContent(settings, retries - 1);
         }
         throw error;
@@ -32,20 +34,22 @@ async function sendSettingsToContent(settings, retries = 3) {
     try {
       const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
       if (!tab) return false;
-  
+
+      // Always inject before first send to avoid first-click race conditions
       try {
-        return await sendSettingsToContent(settings);
-      } catch (err) {
-        console.log('Initial send failed, attempting to inject content script...');
         await chrome.scripting.executeScript({
-          target: {tabId: tab.id},
+          target: { tabId: tab.id },
           files: ['contentScript.js']
         });
-        
-        await new Promise(resolve => setTimeout(resolve, 200));
-        
-        return await sendSettingsToContent(settings);
+      } catch (e) {
+        console.warn('Injection warning (may already be injected):', e);
       }
+
+      // Give the content script a moment to initialize
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Now attempt to send; sendSettingsToContent has its own retry logic too
+      return await sendSettingsToContent(settings);
     } catch (error) {
       console.error('Error in injectAndSendMessage:', error);
       showStatus('Error applying settings. Please refresh the page and try again.');
@@ -1260,6 +1264,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const lineSpacingValue = document.getElementById('lineSpacingValue');
   const overlayColorPicker = document.getElementById('overlayColor');
   const overlayOpacitySlider = document.getElementById('overlayOpacity');
+  const applyBtn = document.getElementById('applyBtn');
   const resetBtn = document.getElementById('resetBtn');
   const statusEl = document.getElementById('status');
 //   const darkModeToggle = document.getElementById('darkModeToggle');
@@ -1347,7 +1352,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
   
-  // Apply Settings button removed; all changes now auto-apply in real time
+  // Apply Settings button: apply current values on demand
+  applyBtn?.addEventListener('click', async () => {
+    console.log('[Popup] Apply clicked');
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const url = tab?.url ? new URL(tab.url) : null;
+      const restrictedProtocols = ['chrome:', 'edge:', 'about:', 'chrome-extension:', 'moz-extension:', 'safari-web-extension:'];
+      if (!tab || !url || restrictedProtocols.includes(url.protocol)) {
+        console.warn('[Popup] Cannot apply on this page/protocol:', url?.protocol);
+        if (statusEl) {
+          statusEl.textContent = 'Cannot apply on this page. Open a normal website tab and try again.';
+          statusEl.className = 'status-message error show';
+          statusEl.style.display = 'block';
+        }
+        return;
+      }
+    } catch (e) {
+      console.warn('[Popup] Could not read active tab:', e);
+    }
+    const settings = {
+      highContrast: highContrastToggle.checked,
+      textSize: parseInt(textSizeSlider.value),
+      dyslexicFont: dyslexicFontToggle.checked,
+      textSpacing: parseFloat(textSpacingSlider.value),
+      lineSpacing: parseFloat(lineSpacingSlider.value),
+      ...(overlayColorPicker && { overlayColor: overlayColorPicker.value }),
+      ...(overlayOpacitySlider && { overlayOpacity: parseFloat(overlayOpacitySlider.value) })
+    };
+
+    if (statusEl) {
+      statusEl.textContent = 'Applying settings...';
+      statusEl.className = 'status-message info show';
+      statusEl.style.display = 'block';
+    }
+
+    try {
+      await chrome.storage.sync.set(settings);
+      console.log('[Popup] Saved settings to storage', settings);
+      const success = await injectAndSendMessage(settings);
+      console.log('[Popup] injectAndSendMessage result:', success);
+      if (success) {
+        if (statusEl) {
+          statusEl.textContent = 'Settings applied successfully!';
+          statusEl.className = 'status-message success show';
+          statusEl.style.display = 'block';
+        }
+      } else {
+        throw new Error('Failed to apply settings');
+      }
+    } catch (error) {
+      console.error('Error applying settings:', error);
+      if (statusEl) {
+        statusEl.textContent = 'Error applying settings. Please try again.';
+        statusEl.className = 'status-message error show';
+        statusEl.style.display = 'block';
+      }
+    }
+  });
   
   resetBtn.addEventListener('click', async () => {
     // Set default values in the UI
@@ -1416,41 +1478,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 
-  const updateSettingsInRealTime = debounce(async () => {
-    const settings = {
-      highContrast: highContrastToggle.checked,
-      textSize: parseInt(textSizeSlider.value),
-      dyslexicFont: dyslexicFontToggle.checked,
-      textSpacing: parseFloat(textSpacingSlider.value),
-      lineSpacing: parseFloat(lineSpacingSlider.value),
-      ...(overlayColorPicker && { overlayColor: overlayColorPicker.value }),
-      ...(overlayOpacitySlider && { overlayOpacity: parseFloat(overlayOpacitySlider.value) })
-    };
-    
-    try {
-      await chrome.storage.sync.set(settings);
-      
-      await injectAndSendMessage(settings);
-    } catch (error) {
-      console.error('Error updating settings in real-time:', error);
-    }
-  }, 150); 
-
-  [highContrastToggle, dyslexicFontToggle].filter(Boolean).forEach(element => {
-    element.addEventListener('change', updateSettingsInRealTime);
-  });
-  
-  [textSizeSlider, textSpacingSlider, lineSpacingSlider].filter(Boolean).forEach(element => {
-    if (element) {
-      element.addEventListener('input', updateSettingsInRealTime);
-    }
-  });
-  
-  if (overlayColorPicker) {
-    overlayColorPicker.addEventListener('change', updateSettingsInRealTime);
-  }
-  
-  if (overlayOpacitySlider) {
-    overlayOpacitySlider.addEventListener('input', updateSettingsInRealTime);
-  }
+  // Disable auto-apply: only update the inline value labels on input
+  // The actual applying happens when Apply is clicked
 });
