@@ -1,24 +1,30 @@
-async function sendSettingsToContent(settings, retries = 3) {
+async function sendSettingsToContent(settings, retries = 5) {
     try {
       const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
       if (!tab) throw new Error('No active tab found');
       
       try {
-        await chrome.tabs.sendMessage(tab.id, {
+        const response = await chrome.tabs.sendMessage(tab.id, {
           action: 'applyAccessibility',
           settings: settings
         });
-        return true;
+        if (response && response.status === 'success') {
+          return true;
+        } else {
+          console.warn('Content script responded without success:', response);
+          throw new Error('Apply did not confirm success');
+        }
       } catch (error) {
-        const msg = (error && error.message) ? error.message : String(error);
-        if (retries > 0 && (msg.includes('receiving end') || msg.includes('Could not establish connection'))) {
+        const raw = (error && error.message) ? error.message : String(error);
+        const msg = raw.toLowerCase();
+        if (retries > 0 && (msg.includes('receiving end') || msg.includes('could not establish connection'))) {
           console.log(`Content script not ready, injecting and retrying... (${retries} attempts left)`);
           await chrome.scripting.executeScript({
             target: {tabId: tab.id},
             files: ['contentScript.js']
           });
           // Give the script a bit more time to initialize before retrying
-          await new Promise(resolve => setTimeout(resolve, 400));
+          await new Promise(resolve => setTimeout(resolve, 600));
           return sendSettingsToContent(settings, retries - 1);
         }
         throw error;
@@ -35,20 +41,29 @@ async function sendSettingsToContent(settings, retries = 3) {
       const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
       if (!tab) return false;
 
-      // Always inject before first send to avoid first-click race conditions
-      try {
-        await chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          files: ['contentScript.js']
-        });
-      } catch (e) {
-        console.warn('Injection warning (may already be injected):', e);
+      // Inject content script
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['contentScript.js']
+      });
+
+      // Wait and ping until listener is ready
+      const maxAttempts = 6;
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          const pong = await chrome.tabs.sendMessage(tab.id, { action: 'ping' });
+          if (pong && pong.status === 'pong') {
+            break;
+          }
+        } catch (e) {
+          // ignore and wait
+        }
+        await new Promise(r => setTimeout(r, 150));
+        if (attempt === maxAttempts) {
+          console.warn('[Popup] Content script did not respond to ping');
+        }
       }
 
-      // Give the content script a moment to initialize
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Now attempt to send; sendSettingsToContent has its own retry logic too
       return await sendSettingsToContent(settings);
     } catch (error) {
       console.error('Error in injectAndSendMessage:', error);
@@ -985,7 +1000,8 @@ function showStatusMessage(message, type = 'info') {
   }
 }
 
-let GEMINI_API_KEY = ''; 
+// DEFAULT Gemini API key (auto-used for Summarize). You can still override it via the UI.
+let GEMINI_API_KEY = 'AIzaSyCIujNkiXS1Ip5fRWj2NLxrHFvUc_i5XFg'; 
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent';
 
 function toggleSections(hasApiKey) {
@@ -1004,16 +1020,23 @@ function toggleSections(hasApiKey) {
 async function loadApiKey() {
   try {
     const result = await chrome.storage.sync.get(['geminiApiKey']);
-    if (result.geminiApiKey) {
-      GEMINI_API_KEY = result.geminiApiKey;
-      document.getElementById('apiKey').value = result.geminiApiKey;
+    if (result.geminiApiKey && result.geminiApiKey.trim()) {
+      GEMINI_API_KEY = result.geminiApiKey.trim();
+      const apiEl = document.getElementById('apiKey');
+      if (apiEl) apiEl.value = result.geminiApiKey.trim();
       toggleSections(true);
     } else {
-      toggleSections(false);
+      // No stored key; use default built-in key and enable Summarize by default
+      const apiEl = document.getElementById('apiKey');
+      if (apiEl) apiEl.value = GEMINI_API_KEY;
+      toggleSections(true);
     }
   } catch (error) {
     console.error('Error loading API key:', error);
-    toggleSections(false);
+    // Fall back to default key and enable summarize
+    const apiEl = document.getElementById('apiKey');
+    if (apiEl) apiEl.value = GEMINI_API_KEY;
+    toggleSections(true);
   }
 }
 
@@ -1301,13 +1324,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   if (textSpacingValue) {
     textSpacingSlider.addEventListener('input', () => {
-      textSpacingValue.textContent = `${textSpacingSlider.value * 100}%`;
+      const pct = Math.round(parseFloat(textSpacingSlider.value) * 100);
+      textSpacingValue.textContent = `${pct}%`;
     });
   }
   
   if (lineSpacingValue) {
     lineSpacingSlider.addEventListener('input', () => {
-      lineSpacingValue.textContent = `${lineSpacingSlider.value * 100}%`;
+      const pct = Math.round(parseFloat(lineSpacingSlider.value) * 100);
+      lineSpacingValue.textContent = `${pct}%`;
     });
   }
   

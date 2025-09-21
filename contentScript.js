@@ -249,8 +249,13 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       try {
         switch (request.action) {
+          case 'ping':
+            sendResponse({ status: 'pong' });
+            break;
           case 'applyAccessibility':
             if (request.settings) {
+              // Debug log to verify delivery
+              try { console.log('[ContentScript] Applying settings', request.settings); } catch (e) {}
               // Apply only when messaged by the popup. Do not persist here.
               applySettingsWithRetry(request.settings);
               sendResponse({status: 'success'});
