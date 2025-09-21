@@ -1000,8 +1000,8 @@ function showStatusMessage(message, type = 'info') {
   }
 }
 
-// DEFAULT Gemini API key (auto-used for Summarize). You can still override it via the UI.
-let GEMINI_API_KEY = 'AIzaSyCIujNkiXS1Ip5fRWj2NLxrHFvUc_i5XFg'; 
+// Gemini API key (loaded from storage or config.local.json)
+let GEMINI_API_KEY = '';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent';
 
 function toggleSections(hasApiKey) {
@@ -1019,24 +1019,41 @@ function toggleSections(hasApiKey) {
 
 async function loadApiKey() {
   try {
+    // 1) Try stored key
     const result = await chrome.storage.sync.get(['geminiApiKey']);
-    if (result.geminiApiKey && result.geminiApiKey.trim()) {
-      GEMINI_API_KEY = result.geminiApiKey.trim();
+    const stored = (result.geminiApiKey || '').trim();
+    if (stored) {
+      GEMINI_API_KEY = stored;
       const apiEl = document.getElementById('apiKey');
-      if (apiEl) apiEl.value = result.geminiApiKey.trim();
+      if (apiEl) apiEl.value = stored;
       toggleSections(true);
-    } else {
-      // No stored key; use default built-in key and enable Summarize by default
-      const apiEl = document.getElementById('apiKey');
-      if (apiEl) apiEl.value = GEMINI_API_KEY;
-      toggleSections(true);
+      return;
     }
+
+    // 2) Try local config file
+    try {
+      const url = chrome.runtime.getURL('config.local.json');
+      const resp = await fetch(url);
+      if (resp.ok) {
+        const cfg = await resp.json();
+        const localKey = (cfg.geminiApiKey || '').trim();
+        if (localKey) {
+          GEMINI_API_KEY = localKey;
+          const apiEl = document.getElementById('apiKey');
+          if (apiEl) apiEl.value = localKey;
+          toggleSections(true);
+          return;
+        }
+      }
+    } catch (e) {
+      // config.local.json may not exist; ignore
+    }
+
+    // 3) No key available
+    toggleSections(false);
   } catch (error) {
     console.error('Error loading API key:', error);
-    // Fall back to default key and enable summarize
-    const apiEl = document.getElementById('apiKey');
-    if (apiEl) apiEl.value = GEMINI_API_KEY;
-    toggleSections(true);
+    toggleSections(false);
   }
 }
 

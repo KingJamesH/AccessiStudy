@@ -1,0 +1,11 @@
+# Local config containing secrets (do NOT commit)
+config.local.json
+
+# Node modules (if added later)
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store

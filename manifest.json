@@ -19,6 +19,7 @@
       "resources": [
         "contentScript.js", 
         "styles.css",
+        "config.local.json",
         "fonts/OpenDyslexic-Regular.otf",
         "fonts/OpenDyslexic-Bold.otf",
         "fonts/OpenDyslexic-Italic.otf",
