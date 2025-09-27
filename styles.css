@@ -1048,6 +1048,17 @@ input[type="checkbox"]:focus-visible {
   border-left: 3px solid #1a73e8;
 }
 
+/* Notes page: site headers should look flat (no shadow/hover lift) */
+button.site-header {
+  box-shadow: none !important;
+  background: transparent;
+}
+button.site-header:hover,
+button.site-header:active {
+  box-shadow: none !important;
+  transform: none !important;
+}
+
 .setting input[type="range"] {
   width: 100%;
   margin: 8px 0;

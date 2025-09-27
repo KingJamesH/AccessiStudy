@@ -91,7 +91,7 @@ function showStatus(message, isError = false) {
     
     setTimeout(() => {
       statusElement.style.display = 'none';
-    }, 3000);
+    }, 1500);
   }
 }
 
@@ -347,7 +347,8 @@ function setupAnnotationTools() {
             color: document.getElementById('highlightColor')?.value || '#FFEB3B',
             url: tab?.url || '',
             domain: tab?.url ? new URL(tab.url).hostname.replace('www.', '') : '',
-            title: tab?.title || 'Untitled Page'
+            title: tab?.title || 'Untitled Page',
+            source: 'human'
           };
           
           await applyAnnotation('addNote', annotation);
@@ -383,7 +384,8 @@ function setupAnnotationTools() {
           color: '#FFEB3B',
           url: tab?.url || '',
           domain: tab?.url ? new URL(tab.url).hostname.replace('www.', '') : '',
-          title: tab?.title || 'Untitled Page'
+          title: tab?.title || 'Untitled Page',
+          source: 'human'
         };
         
         if (tab?.id) {
@@ -782,132 +784,10 @@ async function downloadNotesAsTxt() {
 
 async function openNotesInNewTab() {
   try {
-    const notes = await getAllNotes();
-    if (notes.length === 0) {
-      showStatus('No notes found to display');
-      return;
-    }
-    
-    let htmlContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>My Notes (${notes.length})</title>
-        <style>
-          body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6; 
-            margin: 0;
-            padding: 20px;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #f5f5f5;
-          }
-          h1 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-          }
-          .note {
-            border-left: 4px solid #3498db;
-            background: white;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          }
-          .note-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #eee;
-          }
-          .note-title {
-            font-weight: 600;
-            color: #2c3e50;
-            margin: 0;
-          }
-          .note-date {
-            color: #7f8c8d;
-            font-size: 0.9em;
-          }
-          .note-text {
-            white-space: pre-wrap;
-            margin: 10px 0;
-            line-height: 1.5;
-          }
-          .note-source {
-            font-size: 0.85em;
-            color: #7f8c8d;
-            margin-top: 10px;
-            border-top: 1px dashed #eee;
-            padding-top: 8px;
-          }
-          .note-source a {
-            color: #3498db;
-            text-decoration: none;
-          }
-          .note-source a:hover {
-            text-decoration: underline;
-          }
-          .no-notes {
-            text-align: center;
-            color: #7f8c8d;
-            padding: 40px 20px;
-            font-style: italic;
-          }
-        </style>
-      </head>
-      <body>
-        <h1>My Notes (${notes.length})</h1>
-    `;
-    
-    if (notes.length === 0) {
-      htmlContent += '<div class="no-notes">No notes found. Start by adding some notes!</div>';
-    } else {
-      notes.forEach((note, index) => {
-        const date = new Date(note.timestamp || Date.now());
-        const formattedDate = date.toLocaleString(undefined, {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        
-        const noteText = (note.text || note.content || '').replace(/\n/g, '<br>');
-        const noteTitle = note.title ? `From: ${note.title}` : '';
-        
-        htmlContent += `
-          <div class="note">
-            <div class="note-header">
-              <h3 class="note-title">Note ${index + 1}</h3>
-              <span class="note-date">${formattedDate}</span>
-            </div>
-            <div class="note-text">${noteText}</div>
-            ${note.url ? `
-              <div class="note-source">
-                <a href="${note.url}" target="_blank">
-                  ${noteTitle || 'View source'}
-                </a>
-              </div>
-            ` : ''}
-          </div>
-        `;
-      });
-    }
-    
-    htmlContent += '</body></html>';
-    
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    chrome.tabs.create({ url: url });
-    
+    const notesUrl = chrome.runtime.getURL('notes.html');
+    await chrome.tabs.create({ url: notesUrl });
   } catch (error) {
-    console.error('Error opening notes in new tab:', error);
+    console.error('Error opening notes page:', error);
     showStatus('Error displaying notes', true);
   }
 }

@@ -83,11 +83,11 @@ async function loadApiKeyForBG() {
   return '';
 }
 
-async function summarizeText(text, pageTitle) {
+async function summarizeText(text, pageTitle, pageUrl) {
   const key = await loadApiKeyForBG();
   if (!key) throw new Error('No API key set');
 
-  const prompt = `Explain this like I'm in 5th grade. Use short, simple sentences (2-3 sentences).\n\nTitle: ${pageTitle || ''}\nText: ${text.slice(0, 25000)}`;
+  const prompt = `Explain this like I'm in 9th grade. Use simple sentences (2-3 sentences). Please use the link for context but do not include any additional information in the summary not included in the Text. \n\nTitle: ${pageTitle || ''}\nURL: ${pageUrl || ''}\nText: ${text.slice(0, 25000)}`;
 
   const res = await fetch(`${GEMINI_API_URL}?key=${key}`, {
     method: 'POST',
@@ -110,7 +110,8 @@ async function addNote(summaryText, tabInfo, originalSelection) {
     timestamp: new Date().toISOString(),
     url: tabInfo?.url || '',
     title: tabInfo?.title ? `Summary: ${tabInfo.title}` : 'Summary of selection',
-    original: originalSelection?.slice(0, 2000) || ''
+    original: originalSelection?.slice(0, 2000) || '',
+    source: 'ai'
   };
 
   const data = await chrome.storage.sync.get('annotations');
@@ -130,7 +131,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     const selection = (info.selectionText || '').trim();
     if (!selection) return;
     try {
-      const summary = await summarizeText(selection, tab?.title || '');
+      const summary = await summarizeText(selection, tab?.title || '', tab?.url || '');
       await addNote(summary, tab, selection);
       await openNotesPage();
     } catch (err) {

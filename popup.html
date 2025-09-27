@@ -39,7 +39,7 @@
           <div class="section-header">
             <i class="fas fa-text-height"></i>
             <h2>Text Settings</h2>
-            <i class="fas fa-chevron-down"></i>
+            <!-- <i class="fas fa-chevron-down"></i> -->
           </div>
         </button>
         <div id="text-settings" class="section-content" style="display: block;">
@@ -88,7 +88,7 @@
           <div class="section-header">
             <i class="fas fa-adjust"></i>
             <h2>Display Settings</h2>
-            <i class="fas fa-chevron-down"></i>
+            <!-- <i class="fas fa-chevron-down"></i> -->
           </div>
         </button>
         <div id="display-settings" class="section-content" style="display: block;">
@@ -118,37 +118,7 @@
         </div>
     </div>
     
-    <!-- API Key Input Section (shown by default) -->
-    <div id="apiKeySection" class="setting" style="margin-top: 15px; display: none;">
-      <div class="api-key-container">
-        <label for="apiKey">
-          <div class="setting-name-row">
-            <span class="setting-name">Gemini API Key</span>
-            <i class="fas fa-info-circle" title="Get your API key from Google AI Studio"></i>
-          </div>
-        </label>
-        <div class="input-with-button">
-          <input type="password" id="apiKey" placeholder="Enter your Gemini API key" style="width: 100%;">
-          <button id="saveApiKey" class="small-button">Save</button>
-        </div>
-        <div id="apiKeyStatus" class="status-message" style="display: none; margin-top: 8px;"></div>
-        <p class="api-key-hint">Your API key is stored locally and only used for generating summaries.</p>
-      </div>
-    </div>
-    
-    <!-- Summarize Section (hidden by default) -->
-    <div id="summarizeSection" class="setting" style="margin-top: 15px; display: none;">
-      <button id="summarizeButton" class="action-button" style="width: 100%;">
-        <i class="fas fa-robot"></i> AI Summarize Page
-      </button>
-      <div id="summaryStatus" class="status-message" style="display: none;"></div>
-      <div id="summaryResult" class="summary-result" style="margin-top: 10px; display: none;"></div>
-      <div class="api-key-actions">
-        <button id="changeApiKey" class="text-button">
-          <i class="fas fa-key"></i> Change API Key
-        </button>
-      </div>
-    </div>
+    <!-- (Moved) AI sections relocated to Notes tab -->
     <div class="button-group">
         <button id="applyBtn">Apply Settings</button>
         <button id="resetBtn" class="secondary">Reset to Defaults</button>
@@ -159,32 +129,50 @@
       <!-- notes tab -->
       <div id="annotation-tab" class="tab-pane">
         <div class="setting">
-          <h3 id="notes-title">Notes</h3>
-          <div class="annotation-toolbar">
-            <div class="tool-row">
-              <button id="addNoteBtn" class="btn">
-                <i class="fas fa-plus"></i> Add Note
-              </button>
-            </div>
-            <div class="tool-row action-buttons">
-              <button id="downloadNotesBtn" class="btn secondary" title="Download Notes as TXT">
-                <i class="fas fa-download"></i>
-              </button>
-              <button id="openNotesBtn" class="btn secondary" title="Open in New Tab">
-                <i class="fas fa-external-link-alt"></i>
-              </button>
-              <button id="copyNotesBtn" class="btn secondary" title="Copy to Clipboard">
-                <i class="far fa-copy"></i>
-              </button>
+          <h3 id="notes-title">Notes:</h3>
+
+          <!-- Write note -->
+          <div class="tool-row" style="margin-top: 6px;">
+            <button id="addNoteBtn" class="btn">
+              <i class="fas fa-plus"></i> Write page note
+            </button>
+          </div>
+
+          <!-- AI Summarize Page -->
+          <!-- API Key Input Section (restored here) -->
+          <div id="apiKeySection" class="setting" style="margin-top: 10px; display: none;">
+            <div class="api-key-container">
+              <label for="apiKey">
+                <div class="setting-name-row">
+                  <span class="setting-name">Gemini API Key</span>
+                  <i class="fas fa-info-circle" title="Get your API key from Google AI Studio"></i>
+                </div>
+              </label>
+              <div class="input-with-button">
+                <input type="password" id="apiKey" placeholder="Enter your Gemini API key" style="width: 100%;">
+                <button id="saveApiKey" class="small-button">Save</button>
+              </div>
+              <div id="apiKeyStatus" class="status-message" style="display: none; margin-top: 8px;"></div>
+              <p class="api-key-hint">Your API key is stored locally and only used for generating summaries.</p>
             </div>
           </div>
-          
-          <div id="annotations-container">
-            <h4>Your Notes</h4>
-            <div id="status-message" style="display: none; margin: 8px 0; padding: 6px 10px; border-radius: 4px; font-size: 0.9em;"></div>
-            <div id="annotations-list">
-            </div>
+
+          <div id="summarizeSection" class="setting" style="margin-top: 10px; display: block;">
+            <button id="summarizeButton" class="action-button" style="width: 100%;">
+              <i class="fas fa-robot"></i> AI Summarize Page
+            </button>
+            <div id="summaryStatus" class="status-message" style="display: none;"></div>
+            <div id="summaryResult" class="summary-result" style="margin-top: 10px; display: none;"></div>
           </div>
+
+          <!-- Open Notes -->
+          <div class="tool-row action-buttons" style="margin-top: 6px;">
+            <button id="openNotesBtn" class="btn secondary" title="Open in New Tab">
+              <i class="fas fa-external-link-alt"></i> Open Notes
+            </button>
+          </div>
+
+          <!-- Removed inline 'Your Notes' and download/copy buttons -->
         </div>
       </div>
     </div>
