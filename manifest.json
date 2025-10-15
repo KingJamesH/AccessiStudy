@@ -1,0 +1,39 @@
+{
+    "manifest_version": 3,
+    "name": "AccessiStudy",
+    "version": "1.0",
+    "description": "Extension for students to improve the accessibility of websites.",
+    "permissions": [
+      "activeTab",
+      "storage",
+      "scripting",
+      "webRequest",
+      "contextMenus"
+    ],
+    "host_permissions": [
+      "https://generativelanguage.googleapis.com/*"
+    ],
+    "content_security_policy": {
+      "extension_pages": "script-src 'self'; connect-src 'self' https://generativelanguage.googleapis.com;"
+    },
+    "web_accessible_resources": [{
+      "resources": [
+        "contentScript.js", 
+        "styles.css",
+        "config.local.json",
+        "fonts/OpenDyslexic-Regular.otf",
+        "fonts/OpenDyslexic-Bold.otf",
+        "fonts/OpenDyslexic-Italic.otf",
+        "fonts/OpenDyslexic-BoldItalic.otf"
+      ],
+      "matches": ["<all_urls>"]
+    }],
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": []
+  }
+  
