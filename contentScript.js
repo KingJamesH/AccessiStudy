@@ -79,8 +79,8 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
         styleElement.id = styleId;
         styleElement.textContent = `
           /* Apply high contrast colors without affecting layout */
-          html.accessibility-high-contrast,
-          html.accessibility-high-contrast * {
+          html.accessibility-high-contrast:not(.chrome-extension-popup),
+          html.accessibility-high-contrast *:not(.chrome-extension-popup) {
             /* Only modify color-related properties */
             background-color: #000 !important;
             color: #fff !important;
@@ -97,32 +97,32 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
           }
           
           /* For pseudo-elements */
-          html.accessibility-high-contrast *::before,
-          html.accessibility-high-contrast *::after,
-          html.accessibility-high-contrast *::first-letter,
-          html.accessibility-high-contrast *::first-line {
+          html.accessibility-high-contrast *:not(.chrome-extension-popup)::before,
+          html.accessibility-high-contrast *:not(.chrome-extension-popup)::after,
+          html.accessibility-high-contrast *:not(.chrome-extension-popup)::first-letter,
+          html.accessibility-high-contrast *:not(.chrome-extension-popup)::first-line {
             background-color: #000 !important;
             color: #fff !important;
             border-color: #fff !important;
           }
           
           /* Links */
-          html.accessibility-high-contrast a,
-          html.accessibility-high-contrast a:link,
-          html.accessibility-high-contrast a:visited,
-          html.accessibility-high-contrast a:hover,
-          html.accessibility-high-contrast a:active,
-          html.accessibility-high-contrast a:focus {
+          html.accessibility-high-contrast a:not(.chrome-extension-popup),
+          html.accessibility-high-contrast a:link:not(.chrome-extension-popup),
+          html.accessibility-high-contrast a:visited:not(.chrome-extension-popup),
+          html.accessibility-high-contrast a:hover:not(.chrome-extension-popup),
+          html.accessibility-high-contrast a:active:not(.chrome-extension-popup),
+          html.accessibility-high-contrast a:focus:not(.chrome-extension-popup) {
             color: #1e90ff !important;
             text-decoration: underline !important;
             background: transparent !important;
           }
           
           /* Form elements - only modify colors, preserve layout */
-          html.accessibility-high-contrast input,
-          html.accessibility-high-contrast textarea,
-          html.accessibility-high-contrast select,
-          html.accessibility-high-contrast button {
+          html.accessibility-high-contrast input:not(.chrome-extension-popup),
+          html.accessibility-high-contrast textarea:not(.chrome-extension-popup),
+          html.accessibility-high-contrast select:not(.chrome-extension-popup),
+          html.accessibility-high-contrast button:not(.chrome-extension-popup) {
             background-color: #000 !important;
             color: #fff !important;
             border-color: #fff !important;
@@ -137,11 +137,11 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
           }
           
           /* Buttons - only modify colors, preserve layout */
-          html.accessibility-high-contrast button,
-          html.accessibility-high-contrast [role="button"],
-          html.accessibility-high-contrast [type="button"],
-          html.accessibility-high-contrast [type="submit"],
-          html.accessibility-high-contrast [type="reset"] {
+          html.accessibility-high-contrast button:not(.chrome-extension-popup),
+          html.accessibility-high-contrast [role="button"]:not(.chrome-extension-popup),
+          html.accessibility-high-contrast [type="button"]:not(.chrome-extension-popup),
+          html.accessibility-high-contrast [type="submit"]:not(.chrome-extension-popup),
+          html.accessibility-high-contrast [type="reset"]:not(.chrome-extension-popup) {
             border-width: 1px !important;
             border-style: solid !important;
             /* Keep original padding */
@@ -149,9 +149,9 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
           }
           
           /* Tables - only modify colors, preserve layout */
-          html.accessibility-high-contrast table,
-          html.accessibility-high-contrast th,
-          html.accessibility-high-contrast td {
+          html.accessibility-high-contrast table:not(.chrome-extension-popup),
+          html.accessibility-high-contrast th:not(.chrome-extension-popup),
+          html.accessibility-high-contrast td:not(.chrome-extension-popup) {
             border-color: #fff !important;
             border-style: solid !important;
             border-width: 1px !important;
@@ -163,13 +163,13 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
           }
           
           /* Images and media - only modify appearance, not layout */
-          html.accessibility-high-contrast img,
-          html.accessibility-high-contrast svg,
-          html.accessibility-high-contrast video,
-          html.accessibility-high-contrast canvas,
-          html.accessibility-high-contrast iframe,
-          html.accessibility-high-contrast object,
-          html.accessibility-high-contrast embed {
+          html.accessibility-high-contrast img:not(.chrome-extension-popup),
+          html.accessibility-high-contrast svg:not(.chrome-extension-popup),
+          html.accessibility-high-contrast video:not(.chrome-extension-popup),
+          html.accessibility-high-contrast canvas:not(.chrome-extension-popup),
+          html.accessibility-high-contrast iframe:not(.chrome-extension-popup),
+          html.accessibility-high-contrast object:not(.chrome-extension-popup),
+          html.accessibility-high-contrast embed:not(.chrome-extension-popup) {
             /* Use opacity instead of filter to prevent layout shifts */
             opacity: 1 !important;
             /* Add outline for better visibility */
@@ -178,18 +178,18 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
           }
           
           /* Override any existing high contrast mode */
-          html.accessibility-high-contrast [style*="contrast"],
-          html.accessibility-high-contrast [style*="invert"],
-          html.accessibility-high-contrast [style*="grayscale"] {
+          html.accessibility-high-contrast [style*="contrast"]:not(.chrome-extension-popup),
+          html.accessibility-high-contrast [style*="invert"]:not(.chrome-extension-popup),
+          html.accessibility-high-contrast [style*="grayscale"]:not(.chrome-extension-popup) {
             filter: none !important;
           }
           
           /* Ensure text is visible in form controls */
-          html.accessibility-high-contrast ::placeholder,
-          html.accessibility-high-contrast ::-webkit-input-placeholder,
-          html.accessibility-high-contrast ::-moz-placeholder,
-          html.accessibility-high-contrast :-ms-input-placeholder,
-          html.accessibility-high-contrast :-moz-placeholder {
+          html.accessibility-high-contrast ::placeholder:not(.chrome-extension-popup),
+          html.accessibility-high-contrast ::-webkit-input-placeholder:not(.chrome-extension-popup),
+          html.accessibility-high-contrast ::-moz-placeholder:not(.chrome-extension-popup),
+          html.accessibility-high-contrast :-ms-input-placeholder:not(.chrome-extension-popup),
+          html.accessibility-high-contrast :-moz-placeholder:not(.chrome-extension-popup) {
             color: #ccc !important;
             opacity: 1 !important;
           }
@@ -261,29 +261,22 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
             font-style: italic;
           }
           
-          .accessibility-dyslexic {
+          .accessibility-dyslexic:not(.chrome-extension-popup) {
             font-family: 'OpenDyslexic', sans-serif !important;
-            /* Allow spacing to be controlled by other styles */
-            letter-spacing: inherit !important;
-            word-spacing: inherit !important;
-            line-height: inherit !important;
           }
           
           /* Apply font to all child elements */
-          .accessibility-dyslexic * {
+          .accessibility-dyslexic *:not(.chrome-extension-popup) {
             font-family: inherit !important;
-            letter-spacing: inherit !important;
-            word-spacing: inherit !important;
-            line-height: inherit !important;
           }
           
-          .accessibility-dyslexic b,
-          .accessibility-dyslexic strong {
+          .accessibility-dyslexic b:not(.chrome-extension-popup),
+          .accessibility-dyslexic strong:not(.chrome-extension-popup) {
             font-weight: bold !important;
           }
           
-          .accessibility-dyslexic i,
-          .accessibility-dyslexic em {
+          .accessibility-dyslexic i:not(.chrome-extension-popup),
+          .accessibility-dyslexic em:not(.chrome-extension-popup) {
             font-style: italic !important;
           }
         `;
@@ -325,51 +318,54 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
       
       const css = `
         /* Apply base line height to html and body first */
-        html, body {
+        html:not(.chrome-extension-popup), body:not(.chrome-extension-popup) {
           line-height: ${lineHeight} !important;
         }
-        
+
         /* Apply spacing to all text elements */
-        * {
+        *:not(.chrome-extension-popup) {
           line-height: inherit !important;
         }
-        
+
         /* Reset specific elements that might interfere */
-        br, hr, img, iframe, canvas, svg, path, rect, g, use, symbol, 
-        circle, ellipse, line, polygon, polyline, text, script, style, 
+        br, hr, img, iframe, canvas, svg, path, rect, g, use, symbol,
+        circle, ellipse, line, polygon, polyline, text, script, style,
         link, meta, title, head, html, body, input, textarea, select, button {
           line-height: normal !important;
         }
-        
-        /* Apply text spacing to all text containers */
-        p, div, span, a, li, td, th, label, h1, h2, h3, h4, h5, h6,
-        figcaption, blockquote, cite, article, section, header, 
-        footer, nav, aside, main, figure, time, mark, small, 
-        strong, em, i, b, u, sub, sup, code, pre, kbd, samp, var, 
-        dfn, abbr, q, address, dt, dd, ol, ul, dl, table, caption, 
-        thead, tbody, tfoot, tr, fieldset, legend, details, summary, 
-        menu, menuitem, [role="paragraph"], [role="listitem"], 
-        [role="term"], [role="definition"], [role="text"] {
+
+        /* Apply text spacing to all text containers - including elements with accessibility classes */
+        p:not(.chrome-extension-popup), div:not(.chrome-extension-popup), span:not(.chrome-extension-popup), a:not(.chrome-extension-popup), li:not(.chrome-extension-popup), td:not(.chrome-extension-popup), th:not(.chrome-extension-popup), label:not(.chrome-extension-popup), h1:not(.chrome-extension-popup), h2:not(.chrome-extension-popup), h3:not(.chrome-extension-popup), h4:not(.chrome-extension-popup), h5:not(.chrome-extension-popup), h6:not(.chrome-extension-popup),
+        figcaption:not(.chrome-extension-popup), blockquote:not(.chrome-extension-popup), cite:not(.chrome-extension-popup), article:not(.chrome-extension-popup), section:not(.chrome-extension-popup), header:not(.chrome-extension-popup),
+        footer:not(.chrome-extension-popup), nav:not(.chrome-extension-popup), aside:not(.chrome-extension-popup), main:not(.chrome-extension-popup), figure:not(.chrome-extension-popup), time:not(.chrome-extension-popup), mark:not(.chrome-extension-popup), small:not(.chrome-extension-popup),
+        strong:not(.chrome-extension-popup), em:not(.chrome-extension-popup), i:not(.chrome-extension-popup), b:not(.chrome-extension-popup), u:not(.chrome-extension-popup), sub:not(.chrome-extension-popup), sup:not(.chrome-extension-popup), code:not(.chrome-extension-popup), pre:not(.chrome-extension-popup), kbd:not(.chrome-extension-popup), samp:not(.chrome-extension-popup), var:not(.chrome-extension-popup),
+        dfn:not(.chrome-extension-popup), abbr:not(.chrome-extension-popup), q:not(.chrome-extension-popup), address:not(.chrome-extension-popup), dt:not(.chrome-extension-popup), dd:not(.chrome-extension-popup), ol:not(.chrome-extension-popup), ul:not(.chrome-extension-popup), dl:not(.chrome-extension-popup), table:not(.chrome-extension-popup), caption:not(.chrome-extension-popup),
+        thead:not(.chrome-extension-popup), tbody:not(.chrome-extension-popup), tfoot:not(.chrome-extension-popup), tr:not(.chrome-extension-popup), fieldset:not(.chrome-extension-popup), legend:not(.chrome-extension-popup), details:not(.chrome-extension-popup), summary:not(.chrome-extension-popup),
+        menu:not(.chrome-extension-popup), menuitem:not(.chrome-extension-popup), [role="paragraph"]:not(.chrome-extension-popup), [role="listitem"]:not(.chrome-extension-popup),
+        [role="term"]:not(.chrome-extension-popup), [role="definition"]:not(.chrome-extension-popup), [role="text"]:not(.chrome-extension-popup),
+        /* Also apply to elements with accessibility classes */
+        .accessibility-dyslexic:not(.chrome-extension-popup), .accessibility-high-contrast:not(.chrome-extension-popup),
+        .accessibility-dyslexic *:not(.chrome-extension-popup), .accessibility-high-contrast *:not(.chrome-extension-popup) {
           line-height: ${lineHeight} !important;
           letter-spacing: ${letterSpacing}em !important;
           word-spacing: ${wordSpacing}em !important;
         }
-        
+
         /* Ensure form elements are usable */
-        input, textarea, select, button {
+        input:not(.chrome-extension-popup), textarea:not(.chrome-extension-popup), select:not(.chrome-extension-popup), button:not(.chrome-extension-popup) {
           padding: 0.5em !important;
           line-height: normal !important;
         }
-        
+
         /* Handle placeholder text */
-        ::placeholder, input::placeholder, textarea::placeholder {
+        ::placeholder:not(.chrome-extension-popup), input::placeholder:not(.chrome-extension-popup), textarea::placeholder:not(.chrome-extension-popup) {
           letter-spacing: ${letterSpacing}em !important;
           word-spacing: ${wordSpacing}em !important;
         }
-        kbd, samp, var, dfn, abbr, q, address, dt, dd, 
-        ol, ul, dl, table, caption, thead, tbody, tfoot, tr, fieldset, legend,
-        details, summary, menu, menuitem, [role="paragraph"], [role="listitem"],
-        [role="term"], [role="definition"], [role="text"] {
+        kbd:not(.chrome-extension-popup), samp:not(.chrome-extension-popup), var:not(.chrome-extension-popup), dfn:not(.chrome-extension-popup), abbr:not(.chrome-extension-popup), q:not(.chrome-extension-popup), address:not(.chrome-extension-popup), dt:not(.chrome-extension-popup), dd:not(.chrome-extension-popup),
+        ol:not(.chrome-extension-popup), ul:not(.chrome-extension-popup), dl:not(.chrome-extension-popup), table:not(.chrome-extension-popup), caption:not(.chrome-extension-popup), thead:not(.chrome-extension-popup), tbody:not(.chrome-extension-popup), tfoot:not(.chrome-extension-popup), tr:not(.chrome-extension-popup), fieldset:not(.chrome-extension-popup), legend:not(.chrome-extension-popup),
+        details:not(.chrome-extension-popup), summary:not(.chrome-extension-popup), menu:not(.chrome-extension-popup), menuitem:not(.chrome-extension-popup), [role="paragraph"]:not(.chrome-extension-popup), [role="listitem"]:not(.chrome-extension-popup),
+        [role="term"]:not(.chrome-extension-popup), [role="definition"]:not(.chrome-extension-popup), [role="text"]:not(.chrome-extension-popup) {
           text-rendering: optimizeLegibility !important;
           -webkit-font-smoothing: antialiased !important;
           -moz-osx-font-smoothing: grayscale !important;
