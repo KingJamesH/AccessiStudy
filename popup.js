@@ -199,86 +199,6 @@ function setupTabs() {
   });
 }
 
-async function getAllNotes() {
-  try {
-    const data = await chrome.storage.sync.get('annotations');
-    let storedNotes = Array.isArray(data.annotations) ? data.annotations : [];
-    
-    const processedNotes = storedNotes.map(note => ({
-      id: note.id || `note-${Date.now()}`,
-      text: note.text || note.content || '',
-      color: note.color || '#FFD700',
-      timestamp: note.timestamp || new Date().toISOString(),
-      url: note.url || '',
-      title: note.title || 'Untitled Note',
-      ...note
-    }));
-    
-    try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (tab?.id) {
-        try {
-          const url = new URL(tab.url);
-          const restrictedProtocols = ['chrome:', 'edge:', 'about:', 'chrome-extension:', 'moz-extension:', 'safari-web-extension:'];
-          
-          if (!restrictedProtocols.includes(url.protocol)) {
-            const result = await chrome.scripting.executeScript({
-              target: { tabId: tab.id },
-              function: () => {
-                const notes = [];
-                document.querySelectorAll('.annotation-note').forEach(note => {
-                  notes.push({
-                    id: note.dataset.id || `note-${Date.now()}`,
-                    text: note.textContent.trim(),
-                    color: note.dataset.color || '#FFD700',
-                    timestamp: note.dataset.timestamp || new Date().toISOString(),
-                    url: window.location.href,
-                    title: document.title
-                  });
-                });
-                return notes;
-              }
-            });
-            
-            const pageNotes = result[0]?.result || [];
-            
-            const mergedNotes = [...pageNotes];
-            
-            processedNotes.forEach(storedNote => {
-              if (!mergedNotes.some(note => note.id === storedNote.id)) {
-                mergedNotes.push(storedNote);
-              }
-            });
-            
-            return mergedNotes;
-          }
-        } catch (e) {
-          console.warn('Could not get notes from page:', e);
-        }
-      }
-    } catch (e) {
-      console.warn('Could not access tab info:', e);
-    }
-    
-    return processedNotes;
-    
-  } catch (error) {
-    console.error('Error getting notes:', error);
-    showStatus('Error loading notes', true);
-    return [];
-  }
-}
-
-async function openNotesInNewTab() {
-  try {
-    // Open the notes.html page directly
-    const url = chrome.runtime.getURL('notes.html');
-    await chrome.tabs.create({ url });
-  } catch (error) {
-    console.error('Error opening notes:', error);
-    showStatus('Error opening notes: ' + error.message, true);
-  }
-}
 
 function setupCollapsibleSections() {
   const collapsibles = document.querySelectorAll('.collapsible-section');
@@ -328,50 +248,6 @@ function setupCollapsibleSections() {
   });
 }
 
-function showStatusMessage(message, type = 'info') {
-  const statusElement = document.getElementById('summaryStatus');
-  statusElement.textContent = message;
-  statusElement.className = 'status-message';
-  statusElement.classList.add(type);
-  statusElement.style.display = 'block';
-  
-  if (type !== 'error') {
-    setTimeout(() => {
-      if (statusElement.textContent === message) {
-        statusElement.style.display = 'none';
-      }
-    }, 5000);
-  }
-}
-
-
-function toggleSections(hasApiKey) {
-  try {
-    const apiKeySection = document.getElementById('apiKeySection');
-    const aiTab = document.getElementById('ai-tab');
-    
-    if (!apiKeySection) {
-      console.warn('API key section not found in the DOM');
-      return;
-    }
-    
-    if (hasApiKey) {
-      apiKeySection.style.display = 'none';
-      if (aiTab) {
-        aiTab.style.display = 'block';
-      }
-    } else {
-      apiKeySection.style.display = 'block';
-      if (aiTab) {
-        aiTab.style.display = 'none';
-      }
-    }
-  } catch (error) {
-    console.error('Error toggling sections:', error);
-  }
-}
-
-
 document.addEventListener('DOMContentLoaded', async () => {
   // Initialize UI components
   // setupTabs();
@@ -388,12 +264,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const textSpacingValue = document.getElementById('textSpacingValue');
   const lineSpacingSlider = document.getElementById('lineSpacing');
   const lineSpacingValue = document.getElementById('lineSpacingValue');
-  const overlayColorPicker = document.getElementById('overlayColor');
-  const overlayOpacitySlider = document.getElementById('overlayOpacity');
   const applyBtn = document.getElementById('applyBtn');
   const resetBtn = document.getElementById('resetBtn');
   const statusEl = document.getElementById('status');
-  const summarizeButton = document.getElementById('summarizeButton');
   
   // Initialize annotations after a short delay to ensure DOM is ready
   console.log('Starting initialization...');
@@ -463,16 +336,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (lineSpacingValue) {
       lineSpacingValue.textContent = `${Math.round(currentLineSpacing * 100)}%`;
     }
-    
-    if (overlayColorPicker) {
-      overlayColorPicker.value = settings.overlayColor || '#000000';
-    }
-    if (overlayOpacitySlider) {
-      overlayOpacitySlider.value = settings.overlayOpacity || 0;
-    }
   });
   // Apply Settings button: apply current values on demand
-  if (applyBtn) {
+  if (applyBtn) { 
     console.log('Setting up Apply button event listener');
     applyBtn.addEventListener('click', async (e) => {
       e.preventDefault();
@@ -505,8 +371,6 @@ document.addEventListener('DOMContentLoaded', async () => {
           dyslexicFont: dyslexicFontToggle?.checked || false,
           textSpacing: textSpacingSlider ? parseFloat(textSpacingSlider.value) : 1.0,
           lineSpacing: lineSpacingSlider ? parseFloat(lineSpacingSlider.value) : 1.5,
-          overlayColor: overlayColorPicker?.value || '#000000',
-          overlayOpacity: overlayOpacitySlider ? parseFloat(overlayOpacitySlider.value) : 0.5
         };
         
         console.log('Sending settings to content script:', settings);
@@ -571,9 +435,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (lineSpacingValue) {
           lineSpacingValue.textContent = '100%';
         }
-        
-        if (overlayColorPicker) overlayColorPicker.value = '#000000';
-        if (overlayOpacitySlider) overlayOpacitySlider.value = 0;
     
         const defaultSettings = {
           highContrast: false,
@@ -581,8 +442,6 @@ document.addEventListener('DOMContentLoaded', async () => {
           dyslexicFont: false,
           textSpacing: 1.0,
           lineSpacing: 1.0,
-          overlayColor: '#000000',
-          overlayOpacity: 0
         };
         
         await chrome.storage.sync.set(defaultSettings);
