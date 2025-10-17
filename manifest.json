@@ -10,12 +10,6 @@
       "webRequest",
       "contextMenus"
     ],
-    "host_permissions": [
-      "https://generativelanguage.googleapis.com/*"
-    ],
-    "content_security_policy": {
-      "extension_pages": "script-src 'self'; connect-src 'self' https://generativelanguage.googleapis.com;"
-    },
     "web_accessible_resources": [{
       "resources": [
         "contentScript.js", 
