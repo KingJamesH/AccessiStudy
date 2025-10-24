@@ -37,21 +37,9 @@ In the future, there are many features that I would like to add, starting with t
 4. Click "Load unpacked"
 5. Select the folder containing the extension files
 
-### Gemini API key
-1. Go to https://aistudio.google.com/
-2. Open the dashboard
-3. Click the "Create API Key" button
-4. Copy the provided key into the extension.
-
-
 
 ## Credits
 - https://youtu.be/0n809nd4Zu4
 - https://youtu.be/uMsrBz8DKCg
 - https://youtu.be/mcfCdFS9VBY
 - https://opendyslexic.org/
-
-## Tech Used:
-- VS Code + extensions
-- ChatGPT for debugging and for cleaning up & formatting code
-- Screencastify for recording & CapCut for editing.
