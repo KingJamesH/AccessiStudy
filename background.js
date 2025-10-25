@@ -111,7 +111,7 @@ chrome.runtime.onInstalled.addListener(() => {
   try {
     chrome.contextMenus.removeAll(() => {
       chrome.contextMenus.create({
-        id: 'accessistudy-summarize-selection',
+        id: 'webable-summarize-selection',
         title: 'Summarize selection',
         contexts: ['selection']
       });
@@ -203,7 +203,7 @@ async function openNotesPage() {
 }
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (info.menuItemId === 'accessistudy-summarize-selection') {
+  if (info.menuItemId === 'webable-summarize-selection') {
     const selection = (info.selectionText || '').trim();
     if (!selection) return;
     try {
@@ -217,7 +217,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         chrome.notifications?.create?.({
           type: 'basic',
           iconUrl: 'icon128.png',
-          title: 'AccessiStudy',
+          title: 'WebAble',
           message: `Failed to summarize: ${String(err.message || err)}`
         });
       } catch {}
