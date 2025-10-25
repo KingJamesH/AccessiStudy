@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // setupTabs();
   // await loadApiKey();
   // setupApiKeyHandlers();
-  setupCollapsibleSections();
+  // setupCollapsibleSections(); // Removed - no longer needed with column layout
   
   // Initialize form elements
   const highContrastToggle = document.getElementById('highContrast');
