@@ -266,6 +266,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const lineSpacingValue = document.getElementById('lineSpacingValue');
   const applyBtn = document.getElementById('applyBtn');
   const resetBtn = document.getElementById('resetBtn');
+  const openSummariesBtn = document.getElementById('openSummariesBtn');
+  const summarizePageBtn = document.getElementById('summarizePageBtn');
+  const clearHistoryBtn = document.getElementById('clearHistoryBtn');
   const statusEl = document.getElementById('status');
   
   // Initialize annotations after a short delay to ensure DOM is ready
@@ -465,7 +468,168 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
   }
-  
+
+  // Summarize Page button
+  if (summarizePageBtn) {
+    console.log('Setting up Summarize Page button event listener');
+    summarizePageBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      console.log('Summarize Page button clicked');
+
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab) {
+          throw new Error('No active tab found');
+        }
+
+        if (statusEl) {
+          statusEl.textContent = 'Getting page content...';
+          statusEl.className = 'status-message info show';
+          statusEl.style.display = 'block';
+        }
+
+        // Get page content
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          function: () => {
+            return {
+              title: document.title,
+              text: document.body.innerText || '',
+              url: window.location.href
+            };
+          }
+        });
+
+        if (results && results[0]) {
+          const pageData = results[0].result;
+
+          if (statusEl) {
+            statusEl.textContent = 'Generating AI summary...';
+            statusEl.className = 'status-message info show';
+          }
+
+          // Generate summary using background script
+          const summaryResponse = await chrome.runtime.sendMessage({
+            action: 'summarizeText',
+            text: pageData.text,
+            title: pageData.title
+          });
+
+          if (!summaryResponse || summaryResponse.error) {
+            throw new Error(summaryResponse?.error || 'Failed to generate summary');
+          }
+
+          const summary = summaryResponse.summary;
+
+          if (statusEl) {
+            statusEl.textContent = 'Saving summary...';
+            statusEl.className = 'status-message info show';
+          }
+
+          // Save the summary using background script
+          const noteResponse = await chrome.runtime.sendMessage({
+            action: 'addNote',
+            summary: summary,
+            tabInfo: pageData,
+            originalSelection: pageData.text.slice(0, 2000)
+          });
+
+          if (!noteResponse || noteResponse.error) {
+            throw new Error(noteResponse?.error || 'Failed to save summary');
+          }
+
+          if (statusEl) {
+            statusEl.textContent = 'Summary saved successfully! Opening notes...';
+            statusEl.className = 'status-message success show';
+          }
+
+          // Open notes page
+          const url = chrome.runtime.getURL('notes.html');
+          await chrome.tabs.create({ url });
+
+          setTimeout(() => {
+            if (statusEl) statusEl.style.display = 'none';
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Error summarizing page:', error);
+        if (statusEl) {
+          statusEl.textContent = 'Error summarizing page. Please try again.';
+          statusEl.className = 'status-message error show';
+          statusEl.style.display = 'block';
+        }
+      }
+    });
+  }
+
+  // Clear AI History button
+  if (clearHistoryBtn) {
+    console.log('Setting up Clear AI History button event listener');
+    clearHistoryBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      console.log('Clear AI History button clicked');
+
+      try {
+        const data = await chrome.storage.sync.get('annotations');
+        const notes = Array.isArray(data.annotations) ? data.annotations : [];
+
+        if (notes.length === 0) {
+          if (statusEl) {
+            statusEl.textContent = 'No AI summaries to clear';
+            statusEl.className = 'status-message info show';
+            statusEl.style.display = 'block';
+            setTimeout(() => {
+              if (statusEl) statusEl.style.display = 'none';
+            }, 2000);
+          }
+          return;
+        }
+
+        if (confirm(`Clear all ${notes.length} AI summaries? This action cannot be undone.`)) {
+          await chrome.storage.sync.set({ annotations: [] });
+
+          if (statusEl) {
+            statusEl.textContent = `Cleared ${notes.length} AI summaries`;
+            statusEl.className = 'status-message success show';
+            statusEl.style.display = 'block';
+            setTimeout(() => {
+              if (statusEl) statusEl.style.display = 'none';
+            }, 2000);
+          }
+        }
+      } catch (error) {
+        console.error('Error clearing AI history:', error);
+        if (statusEl) {
+          statusEl.textContent = 'Error clearing AI history';
+          statusEl.className = 'status-message error show';
+          statusEl.style.display = 'block';
+        }
+      }
+    });
+  }
+
+  // Open AI Summaries button (existing functionality)
+  if (openSummariesBtn) {
+    console.log('Setting up Open AI Summaries button event listener');
+    openSummariesBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      console.log('Open AI Summaries button clicked');
+
+      try {
+        const url = chrome.runtime.getURL('notes.html');
+        await chrome.tabs.create({ url });
+        console.log('AI Summaries page opened successfully');
+      } catch (error) {
+        console.error('Error opening AI Summaries page:', error);
+        if (statusEl) {
+          statusEl.textContent = 'Error opening AI Summaries page';
+          statusEl.className = 'status-message error show';
+          statusEl.style.display = 'block';
+        }
+      }
+    });
+  }
+
   function debounce(func, wait) {
     let timeout;
     return function(...args) {

@@ -149,6 +149,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         .catch(err => sendResponse({ status: 'error', message: String(err) }));
       return true; // async
     }
+
+    if (request.action === 'summarizeText') {
+      (async () => {
+        try {
+          const summary = await summarizeText(request.text, request.title || '');
+          sendResponse({ summary });
+        } catch (error) {
+          sendResponse({ error: String(error) });
+        }
+      })();
+      return true; // async response
+    }
+
+    if (request.action === 'addNote') {
+      (async () => {
+        try {
+          const note = await addNote(request.summary, request.tabInfo, request.originalSelection);
+          sendResponse({ note });
+        } catch (error) {
+          sendResponse({ error: String(error) });
+        }
+      })();
+      return true; // async response
+    }
   } catch (e) {
     try { sendResponse({ status: 'error', message: String(e) }); } catch (_) {}
   }

@@ -97,6 +97,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  async function deleteNote(noteId) {
+    try {
+      const data = await chrome.storage.sync.get('annotations');
+      const notes = Array.isArray(data.annotations) ? data.annotations : [];
+      const filtered = notes.filter(n => n.id !== noteId);
+      await chrome.storage.sync.set({ annotations: filtered });
+      console.log('Note deleted:', noteId);
+    } catch (e) {
+      console.error('Failed to delete note:', e);
+      alert('Failed to delete note');
+    }
+  }
+
   async function clearAllNotes() {
     try {
       const data = await chrome.storage.sync.get('annotations');

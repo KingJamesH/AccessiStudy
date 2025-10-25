@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "AccessiStudy",
-    "version": "2.1",
-    "description": "Extension for students to improve the accessibility of websites.",
+    "name": "WebAble",
+    "version": "3.0",
+    "description": "Accessibility and AI to let EVERYONE access the internet",
     "permissions": [
       "activeTab",
       "storage",
@@ -15,14 +15,17 @@
     ],
     "web_accessible_resources": [{
       "resources": [
-        "contentScript.js", 
+        "contentScript.js",
         "styles.css",
         "config.local.json",
         "services/*",
         "fonts/OpenDyslexic-Regular.otf",
         "fonts/OpenDyslexic-Bold.otf",
         "fonts/OpenDyslexic-Italic.otf",
-        "fonts/OpenDyslexic-BoldItalic.otf"
+        "fonts/OpenDyslexic-BoldItalic.otf",
+        "notes.html",
+        "notes.js",
+        "popup.js"
       ],
       "matches": ["<all_urls>"]
     }],

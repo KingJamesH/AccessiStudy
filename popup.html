@@ -16,84 +16,127 @@
     <header class="header">
       <div class="header-content">
         <i class="fas fa-universal-access header-icon"></i>
-        <h1>AccessiStudy</h1>
+        <h1>WebAble</h1>
       </div>
-      <p class="header-subtitle">Accessibility tools to improve learning</p>
+      <p class="header-subtitle">Accessibility and AI to let EVERYONE access the internet</p>
     </header>
     
-    <button class="collapsible-section" aria-expanded="true" aria-controls="text-settings">
-          <div class="section-header">
-            <i class="fas fa-text-height"></i>
-            <h2>Text Settings</h2>
+    <div class="main-content">
+      <div class="columns-container">
+        <!-- Column 1: Accessibility Functions -->
+        <div class="column accessibility-column">
+          <div class="column-header">
+            <i class="fas fa-universal-access"></i>
+            <h2>Accessibility Tools</h2>
           </div>
-        </button>
-        <div id="text-settings" class="section-content" style="display: block;">
-          <div class="setting">
-            <label for="textSize">
-              <div class="setting-name-row">
-                <span class="setting-name">Text Size</span>
-                <span class="value-display" id="textSizeValue">100%</span>
+
+          <div class="settings-section">
+            <div class="section-title">
+              <i class="fas fa-text-height"></i>
+              <h3>Text Settings</h3>
+            </div>
+            <div class="setting">
+              <label for="textSize">
+                <div class="setting-name-row">
+                  <span class="setting-name">Text Size</span>
+                  <span class="value-display" id="textSizeValue">100%</span>
+                </div>
+              </label>
+              <input type="range" id="textSize" min="80" max="200" step="5" value="100" aria-label="Adjust text size">
+              <div class="range-labels">
+                <span>A</span>
+                <span>Aa</span>
+                <span>AA</span>
               </div>
-            </label>
-            <input type="range" id="textSize" min="80" max="200" step="5" value="100" aria-label="Adjust text size">
-            <div class="range-labels">
-              <span>A</span>
-              <span>Aa</span>
-              <span>AA</span>
+            </div>
+
+            <div class="setting">
+              <label for="textSpacing">
+                <div class="setting-name-row">
+                  <span class="setting-name">Word Spacing</span>
+                  <span class="value-display accent" id="textSpacingValue">100%</span>
+                </div>
+              </label>
+              <input type="range" id="textSpacing" min="1.0" max="3.0" step="0.1" value="1.0" aria-label="Adjust word spacing">
+            </div>
+
+            <div class="setting">
+              <label for="lineSpacing">
+                <div class="setting-name-row">
+                  <span class="setting-name">Line Spacing</span>
+                  <span class="value-display accent" id="lineSpacingValue">100%</span>
+                </div>
+              </label>
+              <input type="range" id="lineSpacing" min="1.0" max="3.0" step="0.1" value="1.0" aria-label="Adjust line spacing">
             </div>
           </div>
-          
-          <div class="setting">
-            <label for="textSpacing">
-              <div class="setting-name-row">
-                <span class="setting-name">Word Spacing</span>
-                <span class="value-display accent" id="textSpacingValue">100%</span>
-              </div> 
-            </label>
-            <input type="range" id="textSpacing" min="1.0" max="3.0" step="0.1" value="1.0" aria-label="Adjust word spacing">
-          </div>
 
-          <div class="setting">
-            <label for="lineSpacing">
-              <div class="setting-name-row">
-                <span class="setting-name">Line Spacing</span>
-                <span class="value-display accent" id="lineSpacingValue">100%</span>
-              </div>
-            </label>
-            <input type="range" id="lineSpacing" min="1.0" max="3.0" step="0.1" value="1.0" aria-label="Adjust line spacing">
+          <div class="settings-section">
+            <div class="section-title">
+              <i class="fas fa-adjust"></i>
+              <h3>Display Settings</h3>
+            </div>
+            <div class="setting">
+              <label for="dyslexicFont">
+                <div class="setting-name-row">
+                  <input type="checkbox" id="dyslexicFont" aria-label="Enable dyslexic-friendly font">
+                  <span class="setting-name">Dyslexic-Friendly Font</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="setting">
+              <label for="highContrast">
+                <div class="setting-name-row">
+                  <input type="checkbox" id="highContrast" aria-label="Enable high contrast mode">
+                  <span class="setting-name">High Contrast Mode</span>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
 
-        <button class="collapsible-section" aria-expanded="true" aria-controls="display-settings">
-          <div class="section-header">
-            <i class="fas fa-adjust"></i>
-            <h2>Display Settings</h2>
-          </div>
-        </button>
-        <div id="display-settings" class="section-content" style="display: block;">
-          <div class="setting">
-            <label for="dyslexicFont">
-              <div class="setting-name-row">
-                <input type="checkbox" id="dyslexicFont" aria-label="Enable dyslexic-friendly font">
-                <span class="setting-name">Dyslexic-Friendly Font</span>
-              </div>
-            </label>
+        <!-- Column 2: AI Functions -->
+        <div class="column ai-column">
+          <div class="column-header">
+            <i class="fas fa-robot"></i>
+            <h2>AI Assistant</h2>
           </div>
 
-          <div class="setting">
-            <label for="highContrast">
-              <div class="setting-name-row">
-                <input type="checkbox" id="highContrast" aria-label="Enable high contrast mode">
-                <span class="setting-name">High Contrast Mode</span>
+          <div class="ai-section">
+            <button id="summarizePageBtn" class="ai-feature-btn">
+              <i class="fas fa-file-alt"></i>
+              <div class="ai-feature-content">
+                <span class="ai-feature-title">Summarize Page</span>
+                <span class="ai-feature-desc">AI summary of current page</span>
               </div>
-            </label>
+            </button>
+
+            <button id="openSummariesBtn" class="ai-feature-btn">
+              <i class="fas fa-list"></i>
+              <div class="ai-feature-content">
+                <span class="ai-feature-title">View AI Summaries</span>
+                <span class="ai-feature-desc">Browse saved summaries</span>
+              </div>
+            </button>
+
+            <button id="clearHistoryBtn" class="ai-feature-btn danger">
+              <i class="fas fa-trash-alt"></i>
+              <div class="ai-feature-content">
+                <span class="ai-feature-title">Clear AI History</span>
+                <span class="ai-feature-desc">Delete all saved summaries</span>
+              </div>
+            </button>
           </div>
         </div>
-        
-        <div class="button-group">
-          <button id="applyBtn">Apply Settings</button>
-          <button id="resetBtn" class="secondary">Reset to Defaults</button>
-        </div>
+      </div>
+
+      <!-- Bottom: Full-width action buttons -->
+      <div class="bottom-actions">
+        <button id="applyBtn">Apply Accessibility</button>
+        <button id="resetBtn" class="secondary">Reset to Defaults</button>
+      </div>
+    </div>
     
     <div id="status" class="status-message" style="display: none;"></div>
   </div>
