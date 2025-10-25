@@ -28,6 +28,17 @@
       display: flex;
       gap: 8px;
     }
+    .secondary {
+      background: var(--secondary-color, #6c757d);
+      color: white;
+    }
+    .danger {
+      background: #dc3545;
+      color: white;
+    }
+    .secondary:hover, .danger:hover {
+      opacity: 0.8;
+    }
     .notes-container {
       max-width: 900px;
       margin: 0 auto;
@@ -42,7 +53,7 @@
     .note-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       margin-bottom: 6px;
     }
     .note-title {
@@ -50,10 +61,27 @@
       font-weight: 600;
       color: var(--text-color);
       margin: 0;
+      flex: 1;
     }
-    .note-date {
-      font-size: 12px;
-      color: var(--secondary-text);
+    .note-actions {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .delete-note-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      border-radius: 3px;
+      transition: background-color 0.2s;
+    }
+    .delete-note-btn:hover {
+      background: rgba(220, 53, 69, 0.1);
+    }
+    .delete-note-btn:active {
+      background: rgba(220, 53, 69, 0.2);
     }
     .note-text {
       font-size: 13px;
@@ -87,6 +115,7 @@
       <h1>AI Notes</h1>
       <div class="notes-actions">
         <button id="refreshBtn" class="secondary">Refresh Notes</button>
+        <button id="clearAllBtn" class="danger">Clear All Notes</button>
         <button id="exportBtn">Save Notes File</button>
       </div>
     </div>

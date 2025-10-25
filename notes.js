@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const root = document.getElementById('notesRoot');
   const refreshBtn = document.getElementById('refreshBtn');
+  const clearAllBtn = document.getElementById('clearAllBtn');
   const exportBtn = document.getElementById('exportBtn');
 
   function renderEmpty() {
@@ -55,12 +56,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         note.innerHTML = `
           <div class="note-header">
             <h3 class="note-title">${n.title ? escapeHtml(n.title) : 'Note'}</h3>
-            <div class="note-date">${escapeHtml(formatted)}</div>
+            <div class="note-actions">
+              <button class="delete-note-btn" data-id="${escapeAttr(n.id)}" title="Delete note">🗑️</button>
+            </div>
           </div>
           <div class="note-text">${escapeHtml(safeText)}</div>
           <div class="note-source">
-            ${n.url ? `<a href="${escapeAttr(n.url)}" target="_blank" rel="noopener noreferrer">Open page</a>` : ''}
-            ${n.original ? (n.url ? ' • ' : '') + `<span title="Original selection">Original included</span>` : ''}
+            <small>${escapeHtml(formatted)}</small>
+            ${n.url ? ` • <a href="${escapeAttr(n.url)}" target="_blank" rel="noopener noreferrer">Open page</a>` : ''}
+            ${n.original ? ` • <span title="Original selection">Original included</span>` : ''}
           </div>
         `;
 
@@ -76,9 +80,40 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await chrome.storage.sync.get('annotations');
       const notes = Array.isArray(data.annotations) ? data.annotations : [];
       renderNotes(notes);
+
+      // Add delete functionality after rendering
+      document.querySelectorAll('.delete-note-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const noteId = e.target.dataset.id;
+          if (confirm('Are you sure you want to delete this note?')) {
+            await deleteNote(noteId);
+            load(); // Refresh the list
+          }
+        });
+      });
     } catch (e) {
       console.error('Failed to load notes:', e);
       renderEmpty();
+    }
+  }
+
+  async function clearAllNotes() {
+    try {
+      const data = await chrome.storage.sync.get('annotations');
+      const notes = Array.isArray(data.annotations) ? data.annotations : [];
+      if (notes.length === 0) {
+        alert('No notes to clear');
+        return;
+      }
+
+      if (confirm(`Are you sure you want to delete all ${notes.length} notes? This action cannot be undone.`)) {
+        await chrome.storage.sync.set({ annotations: [] });
+        console.log('All notes cleared');
+        load(); // Refresh the list
+      }
+    } catch (e) {
+      console.error('Failed to clear notes:', e);
+      alert('Failed to clear notes');
     }
   }
 
@@ -131,6 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   refreshBtn?.addEventListener('click', load);
+  clearAllBtn?.addEventListener('click', clearAllNotes);
   exportBtn?.addEventListener('click', exportTxt);
 
   load();

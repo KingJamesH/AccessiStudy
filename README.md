@@ -2,7 +2,7 @@
 Around [20% of students](https://ncld.org/wp-content/uploads/2023/07/NCLD_2016%E2%80%932017-Annual-Report-1.pdf) in the US have a learning disability. Only around [10% of web pages](https://webaim.org/projects/million/) meet basic accessibility standards. I created AccessiStudy to help students better access the web. While there are some apps and extensions that can help with accessibility, almost all of them only address one aspect, and most of them are complex and somewhat hard to use. AccessiStudy is a simple and easy to use extension that addresses multiple aspects of accessibility in one spot, helping students better access the web.
 
 ## What it does
-AccessiStudy is an extension meant to **improve the accessibility** of webpages. It provides a clean, intuitive interface where users can easily apply accessibility features to the current webpage. The extension offers text size adjustment, word spacing, line spacing controls, and toggle options for dyslexic-friendly font and high contrast mode. All features are immediately accessible without navigation between tabs. 
+AccessiStudy is an extension meant to **improve the accessibility** of webpages. It provides a clean, intuitive interface where users can easily apply accessibility features to the current webpage. The extension offers text size adjustment, word spacing, line spacing controls, and toggle options for dyslexic-friendly font and high contrast mode. It also incorporates AI-powered text summarization, allowing the user to summarize and explain small sections of text and entire web pages. 
 
 ## How we built it
 
