@@ -18,7 +18,7 @@ WebAble is an extension designed to **improve the accessibility** of webpages fo
 - **Gemini 2.0 Integration**: Uses Google's latest AI model for accurate summaries
 
 **Modern Design:**
-- Clean 800px wide layout with organized columns
+- Clean 698px wide layout with organized columns
 - Beautiful gradient styling and smooth animations
 - Responsive design that works on all screen sizes
 - Intuitive icons and clear labeling
@@ -66,7 +66,8 @@ WebAble now features a comprehensive two-column interface with both accessibilit
 
 **Modern Interface:**
 - **Two-Column Layout**: Accessibility tools on the left, AI features on the right
-- **800px Wide Design**: Spacious layout that works on all screen sizes
+- **698px Wide Design**: Optimized layout that works on all screen sizes
+- **Compact Accessibility**: Settings use minimal horizontal space to prevent vertical scrolling
 - **Visual Hierarchy**: Clear sections with icons and descriptive labels
 - **Smooth Animations**: Hover effects and transitions for better user experience
 
