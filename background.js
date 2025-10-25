@@ -1,3 +1,101 @@
+// API Service Implementation (embedded for reliability)
+class ConfigManager {
+  static async load() {
+    try {
+      const response = await fetch(chrome.runtime.getURL('config.local.json'));
+      if (!response.ok) {
+        throw new Error('Config file not found');
+      }
+      return await response.json();
+    } catch (error) {
+      console.warn('Config file not found or invalid. AI features will be disabled.');
+      return {};
+    }
+  }
+}
+
+class APIService {
+  constructor() {
+    this.apiKey = null;
+    this.model = null;
+  }
+
+  async initialize() {
+    const config = await ConfigManager.load();
+    this.apiKey = config.GEMINI_API_KEY;
+    this.model = config.GEMINI_MODEL || 'gemini-2.0-flash-exp';
+
+    if (!this.apiKey) {
+      throw new Error('No API key set. Please add GEMINI_API_KEY to config.local.json');
+    }
+  }
+
+  async callGemini(prompt, context = '') {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
+
+    const fullPrompt = context ? `${context}\n\n${prompt}` : prompt;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: fullPrompt
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 500,
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Gemini API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+    }
+
+    const data = await response.json();
+    return data.candidates[0].content.parts[0].text;
+  }
+
+  async summarizeText(text) {
+    const prompt = `Please summarize the following text in a clear, concise way that's easy to understand:\n\n${text}`;
+    const context = 'Write a simple summary of the text. Do not include any additional information or context and do not use markdown formatting.';
+    return this.callGemini(prompt, context);
+  }
+}
+
+let apiService = null;
+
+// Initialize API service
+async function initializeAPIService() {
+  if (!apiService) {
+    apiService = new APIService();
+    try {
+      await apiService.initialize();
+    } catch (error) {
+      console.warn('Failed to initialize API service:', error);
+      apiService = null;
+    }
+  }
+  return apiService;
+}
+
+// Summarize text using Gemini
+async function summarizeText(text, context = '') {
+  const service = await initializeAPIService();
+  if (!service) {
+    throw new Error('API service not available. Please check your configuration.');
+  }
+  return service.summarizeText(text);
+}
+
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.set({
     highContrast: false,
@@ -56,51 +154,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
   return false;
 });
-
-// Do NOT auto-apply on tab updates. Apply only on explicit popup action.
-
-// ---------------- Context Menu Summarize Flow ----------------
-
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent';
-
-async function loadApiKeyForBG() {
-  // 1) storage
-  try {
-    const result = await chrome.storage.sync.get(['geminiApiKey']);
-    const stored = (result.geminiApiKey || '').trim();
-    if (stored) return stored;
-  } catch {}
-  // 2) config.local.json
-  try {
-    const url = chrome.runtime.getURL('config.local.json');
-    const resp = await fetch(url);
-    if (resp.ok) {
-      const cfg = await resp.json();
-      const localKey = (cfg.geminiApiKey || '').trim();
-      if (localKey) return localKey;
-    }
-  } catch {}
-  return '';
-}
-
-async function summarizeText(text, pageTitle) {
-  const key = await loadApiKeyForBG();
-  if (!key) throw new Error('No API key set');
-
-  const prompt = `Explain this like I'm in 5th grade. Use short, simple sentences (2-3 sentences).\n\nTitle: ${pageTitle || ''}\nText: ${text.slice(0, 25000)}`;
-
-  const res = await fetch(`${GEMINI_API_URL}?key=${key}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.3, maxOutputTokens: 200 }
-    })
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.message || 'Failed to generate summary');
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No summary available';
-}
 
 async function addNote(summaryText, tabInfo, originalSelection) {
   const annotation = {

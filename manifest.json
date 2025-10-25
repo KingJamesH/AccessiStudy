@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "AccessiStudy",
-    "version": "1.0",
+    "version": "2.0",
     "description": "Extension for students to improve the accessibility of websites.",
     "permissions": [
       "activeTab",
@@ -10,11 +10,15 @@
       "webRequest",
       "contextMenus"
     ],
+    "host_permissions": [
+      "https://generativelanguage.googleapis.com/*"
+    ],
     "web_accessible_resources": [{
       "resources": [
         "contentScript.js", 
         "styles.css",
         "config.local.json",
+        "services/*",
         "fonts/OpenDyslexic-Regular.otf",
         "fonts/OpenDyslexic-Bold.otf",
         "fonts/OpenDyslexic-Italic.otf",
