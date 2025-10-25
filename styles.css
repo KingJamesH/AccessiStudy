@@ -450,11 +450,7 @@ input[type="checkbox"]:focus-visible {
   font-size: 11px;
 }
 
-/* Animation for section changes */
-/* @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
-} */
+/* Animation for section changes - DISABLED */
 
 /* API Key Input Styles */
 .input-with-button {

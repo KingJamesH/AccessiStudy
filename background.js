@@ -222,25 +222,5 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         });
       } catch {}
     }
-  } else if (info.menuItemId === 'accessistudy-save-as-note') {
-    const selection = (info.selectionText || '').trim();
-    if (!selection) return;
-    try {
-      await addNote(selection, tab, selection);
-      await openNotesPage();
-    } catch (err) {
-      console.error('Context save as note failed:', err);
-      // Optional: show a basic notification
-      try {
-        chrome.notifications?.create?.({
-          type: 'basic',
-          iconUrl: 'icon128.png',
-          title: 'AccessiStudy',
-          message: `Failed to save as note: ${String(err.message || err)}`
-        });
-      } catch {}
-    }
-  } else if (info.menuItemId === 'accessistudy-open-notes-page') {
-    await openNotesPage();
   }
 });

@@ -103,20 +103,6 @@ async function sendSettingsToContent(settings, retries = 5) {
   }
 }
 
-function showStatus(message, isError = false) {
-  const statusElement = document.getElementById('status-message');
-  if (statusElement) {
-    statusElement.textContent = message;
-    statusElement.style.color = isError ? 'var(--danger-color)' : 'var(--success-color)';
-    statusElement.style.display = 'block';
-    
-    setTimeout(() => {
-      statusElement.style.display = 'none';
-    }, 3000);
-  }
-}
-
-
 async function extractPageContent() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   
@@ -250,10 +236,7 @@ function setupCollapsibleSections() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Initialize UI components
-  // setupTabs();
-  // await loadApiKey();
-  // setupApiKeyHandlers();
-  // setupCollapsibleSections(); // Removed - no longer needed with column layout
+  // Removed: setupTabs() and setupCollapsibleSections() - no longer needed with column layout
   
   // Initialize form elements
   const highContrastToggle = document.getElementById('highContrast');
