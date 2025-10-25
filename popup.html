@@ -18,7 +18,7 @@
         <i class="fas fa-universal-access header-icon"></i>
         <h1>WebAble</h1>
       </div>
-      <p class="header-subtitle">Accessibility and AI to let EVERYONE access the internet</p>
+      <p class="header-subtitle">Accessibility and AI tools to let EVERYONE access the internet</p>
     </header>
     
     <div class="main-content">
@@ -128,17 +128,36 @@
               </div>
             </button>
           </div>
+
+          <div class="settings-section">
+            <div class="column-header">
+              <i class="fas fa-universal-access"></i>
+              <h2>Apply Settings</h2>
+            </div>
+            <div class="action-buttons">
+              <button id="applyBtn" class="ai-feature-btn">
+                <i class="fas fa-check"></i>
+                <div class="ai-feature-content">
+                  <span class="ai-feature-title">Apply Accessibility</span>
+                  <span class="ai-feature-desc">Apply changes to webpage</span>
+                </div>
+              </button>
+
+              <button id="resetBtn" class="ai-feature-btn secondary">
+                <i class="fas fa-undo"></i>
+                <div class="ai-feature-content">
+                  <span class="ai-feature-title">Reset to Defaults</span>
+                  <span class="ai-feature-desc">Restore original settings</span>
+                </div>
+              </button>
+            </div>
+
+            <!-- Status Messages -->
+            <div id="status" class="status-message" style="display: none;"></div>
+          </div>
         </div>
       </div>
-
-      <!-- Bottom: Full-width action buttons -->
-      <div class="bottom-actions">
-        <button id="applyBtn">Apply Accessibility</button>
-        <button id="resetBtn" class="secondary">Reset to Defaults</button>
-      </div>
     </div>
-    
-    <div id="status" class="status-message" style="display: none;"></div>
   </div>
   
   <script src="popup.js"></script>

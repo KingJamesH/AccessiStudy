@@ -638,7 +638,4 @@ document.addEventListener('DOMContentLoaded', async () => {
       timeout = setTimeout(() => func.apply(context, args), wait);
     };
   }
-
-  // Disable auto-apply: only update the inline value labels on input
-  // The actual applying happens when Apply is clicked
 });
