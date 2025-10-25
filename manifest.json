@@ -3,6 +3,11 @@
     "name": "WebAble",
     "version": "3.0",
     "description": "Accessibility and AI to let EVERYONE access the internet",
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
     "permissions": [
       "activeTab",
       "storage",
@@ -18,23 +23,28 @@
         "contentScript.js",
         "styles.css",
         "config.local.json",
-        "services/*",
         "fonts/OpenDyslexic-Regular.otf",
         "fonts/OpenDyslexic-Bold.otf",
         "fonts/OpenDyslexic-Italic.otf",
         "fonts/OpenDyslexic-BoldItalic.otf",
         "notes.html",
         "notes.js",
-        "popup.js"
+        "popup.js",
+        "icons/*"
       ],
       "matches": ["<all_urls>"]
     }],
     "action": {
-      "default_popup": "popup.html"
+      "default_popup": "popup.html",
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "48": "icons/icon48.png",
+            "128": "icons/icon128.png"
+        }
     },
     "background": {
       "service_worker": "background.js"
     },
     "content_scripts": []
-  }
+}
   

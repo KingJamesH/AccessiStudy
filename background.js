@@ -216,7 +216,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       try {
         chrome.notifications?.create?.({
           type: 'basic',
-          iconUrl: 'icon128.png',
+          iconUrl: 'icons/icon128.png',
           title: 'WebAble',
           message: `Failed to summarize: ${String(err.message || err)}`
         });
