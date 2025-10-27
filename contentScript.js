@@ -12,15 +12,9 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
       }
     }
 
-    // Removed auto-load of settings from storage to ensure the extension
-    // does NOT auto-apply on every page. Settings are now applied only
-    // when the user clicks Apply in the popup (via message).
-
-    // Handle messages from the popup
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log('Content script received message:', request.action, request);
       
-      // Handle ping/pong for connection testing
       if (request.action === 'ping') {
         console.log('Ping received, sending pong');
         sendResponse({ status: 'pong' });
@@ -34,9 +28,7 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
             break;
           case 'applyAccessibility':
             if (request.settings) {
-              // Debug log to verify delivery
               try { console.log('[ContentScript] Applying settings', request.settings); } catch (e) {}
-              // Apply only when messaged by the popup. Do not persist here.
               applySettingsWithRetry(request.settings);
               sendResponse({status: 'success'});
             }
@@ -47,10 +39,9 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
         sendResponse({status: 'error', message: error.message});
       }
       
-      return true; // Keep the message channel open for async response
+      return true; 
     });
     
-    // Notify that content script is ready
     chrome.runtime.sendMessage({action: 'contentScriptReady'});
   }
   
@@ -216,8 +207,6 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
         document.head.appendChild(styleElement);
       }
       
-      // Use page zoom to preserve all relative font-size hierarchies and px-based sizes
-      // while scaling the overall page in Chrome.
       const scale = Math.max(0.5, Math.min(2.5, parseInt(settings.textSize, 10) / 100));
       styleElement.textContent = `
         html { zoom: ${scale} !important; }
@@ -407,4 +396,3 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
     }
   }
   
-  // Do not auto-apply settings from storage on script load.

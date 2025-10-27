@@ -10,7 +10,7 @@ Introducing: **WebAble**. WebAble is a Google Extension that allows the user to 
 WebAble uses DOM manipulation to change the appearance of any webpage to improve accessibility. It also uses the Chrome extension API to store user preferences and send messages to the content script. The user can change the following: 
 
 1. Text size, spacing between letters (word spacing), line spacing
-2. Dyslexic-friendly font (OpenDyslexic)
+2. Dyslexia-friendly font (OpenDyslexic)
 3. High contrast mode
 
 All changes are applied once the user clicks the "Apply Accessibility" button. 

@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // Group by website (hostname)
     const bySite = new Map();
     for (const n of notes) {
       const url = (n.url || '').toString();
@@ -29,7 +28,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       bySite.get(host).push(n);
     }
 
-    // Sort sites alphabetically, and notes newest first within each site
     const siteEntries = Array.from(bySite.entries()).sort((a, b) => a[0].localeCompare(b[0]));
     root.innerHTML = '';
 
@@ -81,7 +79,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const notes = Array.isArray(data.annotations) ? data.annotations : [];
       renderNotes(notes);
 
-      // Add delete functionality after rendering
       document.querySelectorAll('.delete-note-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
           const noteId = e.target.dataset.id;

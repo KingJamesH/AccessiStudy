@@ -1,4 +1,3 @@
-// API Service Implementation (embedded for reliability)
 class ConfigManager {
   static async load() {
     try {
@@ -107,7 +106,6 @@ chrome.runtime.onInstalled.addListener(() => {
     overlayOpacity: 0
   });
 
-  // Create context menu for selected text
   try {
     chrome.contextMenus.removeAll(() => {
       chrome.contextMenus.create({
@@ -117,7 +115,7 @@ chrome.runtime.onInstalled.addListener(() => {
       });
     });
   } catch (e) {
-    // ignore
+
   }
 });
 
@@ -159,7 +157,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           sendResponse({ error: String(error) });
         }
       })();
-      return true; // async response
+      return true; // async 
     }
 
     if (request.action === 'addNote') {
@@ -171,7 +169,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           sendResponse({ error: String(error) });
         }
       })();
-      return true; // async response
+      return true; // async
     }
   } catch (e) {
     try { sendResponse({ status: 'error', message: String(e) }); } catch (_) {}
@@ -212,7 +210,6 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       await openNotesPage();
     } catch (err) {
       console.error('Context summarize failed:', err);
-      // Optional: show a basic notification
       try {
         chrome.notifications?.create?.({
           type: 'basic',
