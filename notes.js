@@ -1,4 +1,19 @@
+
+if (!chrome?.runtime?.id) {
+  document.addEventListener('DOMContentLoaded', () => {
+    alert('This page must be opened from the WebAble extension. Please open it through the extension popup.');
+    document.body.innerHTML = `
+      <div style="padding: 20px; text-align: center; color: #ff6b6b;">
+        <h2>Error: Invalid Context</h2>
+        <p>This page must be opened from the WebAble extension.</p>
+        <p>Please open it through the extension popup.</p>
+      </div>`;
+  });
+  throw new Error('Not running in extension context');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log('Running in extension context');
   const root = document.getElementById('notesRoot');
   const refreshBtn = document.getElementById('refreshBtn');
   const clearAllBtn = document.getElementById('clearAllBtn');
@@ -75,8 +90,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function load() {
     try {
-      const data = await chrome.storage.sync.get('annotations');
+      console.log('Loading notes from storage...');
+      const data = await chrome.storage.local.get('annotations');
       const notes = Array.isArray(data.annotations) ? data.annotations : [];
+      console.log(`Found ${notes.length} notes in storage`);
+      
+      console.log('Parsed notes:', notes);
+      
+      if (notes.length === 0) {
+        console.log('No notes found in any storage');
+      } else {
+        console.log(`Found ${notes.length} notes`);
+      }
+      
       renderNotes(notes);
 
       document.querySelectorAll('.delete-note-btn').forEach(btn => {
@@ -84,7 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           const noteId = e.target.dataset.id;
           if (confirm('Are you sure you want to delete this note?')) {
             await deleteNote(noteId);
-            load(); // Refresh the list
+            load();
           }
         });
       });
@@ -96,10 +122,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function deleteNote(noteId) {
     try {
-      const data = await chrome.storage.sync.get('annotations');
+      const data = await chrome.storage.local.get('annotations');
       const notes = Array.isArray(data.annotations) ? data.annotations : [];
       const filtered = notes.filter(n => n.id !== noteId);
-      await chrome.storage.sync.set({ annotations: filtered });
+      await chrome.storage.local.set({ annotations: filtered });
       console.log('Note deleted:', noteId);
     } catch (e) {
       console.error('Failed to delete note:', e);
@@ -109,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function clearAllNotes() {
     try {
-      const data = await chrome.storage.sync.get('annotations');
+      const data = await chrome.storage.local.get('annotations');
       const notes = Array.isArray(data.annotations) ? data.annotations : [];
       if (notes.length === 0) {
         alert('No notes to clear');
@@ -117,9 +143,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       if (confirm(`Are you sure you want to delete all ${notes.length} notes? This action cannot be undone.`)) {
-        await chrome.storage.sync.set({ annotations: [] });
+        await chrome.storage.local.set({ annotations: [] });
         console.log('All notes cleared');
-        load(); // Refresh the list
+        load();
       }
     } catch (e) {
       console.error('Failed to clear notes:', e);
@@ -129,7 +155,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function exportTxt() {
     try {
-      const data = await chrome.storage.sync.get('annotations');
+      const data = await chrome.storage.local.get('annotations');
       const notes = Array.isArray(data.annotations) ? data.annotations : [];
       if (notes.length === 0) {
         alert('No notes to export');
@@ -175,9 +201,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     return String(s).replace(/"/g, '&quot;');
   }
 
-  refreshBtn?.addEventListener('click', load);
-  clearAllBtn?.addEventListener('click', clearAllNotes);
-  exportBtn?.addEventListener('click', exportTxt);
+  if (refreshBtn) refreshBtn.addEventListener('click', load);
+  if (clearAllBtn) clearAllBtn.addEventListener('click', clearAllNotes);
+  if (exportBtn) exportBtn.addEventListener('click', exportTxt);
 
-  load();
+  
+  try {
+    await load();
+    console.log('Notes loaded ');
+  } catch (error) {
+    console.error('Error loading notes:', error);
+    renderEmpty();
+    
+    const root = document.getElementById('notesRoot');
+    if (root) {
+      const errorDiv = document.createElement('div');
+      errorDiv.style.color = '#ff6b6b';
+      errorDiv.style.padding = '16px';
+      errorDiv.style.border = '1px solid #ff6b6b';
+      errorDiv.style.borderRadius = '4px';
+      errorDiv.style.margin = '16px 0';
+      errorDiv.innerHTML = `
+        <h3>Error loading notes</h3>
+        <p>${error.message || 'Unknown error occurred'}</p>
+        <p>Please try refreshing the page.</p>
+      `;
+      root.prepend(errorDiv);
+    }
+  }
 });

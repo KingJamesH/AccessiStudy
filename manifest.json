@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "WebAble",
-    "version": "2.10.2",
+    "version": "2.11.0",
     "description": "Accessibility and AI to let EVERYONE access the internet",
     "icons": {
         "16": "icons/icon16.png",
@@ -18,22 +18,31 @@
     "host_permissions": [
       "https://generativelanguage.googleapis.com/*"
     ],
-    "web_accessible_resources": [{
-      "resources": [
-        "contentScript.js",
-        "styles.css",
-        "config.local.json",
-        "fonts/OpenDyslexic-Regular.otf",
-        "fonts/OpenDyslexic-Bold.otf",
-        "fonts/OpenDyslexic-Italic.otf",
-        "fonts/OpenDyslexic-BoldItalic.otf",
-        "notes.html",
-        "notes.js",
-        "popup.js",
-        "icons/*"
-      ],
-      "matches": ["<all_urls>"]
-    }],
+    "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'self'"
+    },
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "contentScript.js",
+          "styles.css",
+          "config.local.json",
+          "fonts/OpenDyslexic-Regular.otf",
+          "fonts/OpenDyslexic-Bold.otf",
+          "fonts/OpenDyslexic-Italic.otf",
+          "fonts/OpenDyslexic-BoldItalic.otf",
+          "popup.js",
+          "notes.js",
+          "icons/*"
+        ],
+        "matches": ["<all_urls>"]
+      },
+      {
+        "resources": ["notes.html"],
+        "matches": ["<all_urls>"],
+        "use_dynamic_url": true
+      }
+    ],
     "action": {
       "default_popup": "popup.html",
         "default_icon": {

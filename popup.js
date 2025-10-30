@@ -23,7 +23,6 @@ async function sendSettingsToContent(settings, retries = 5) {
             target: {tabId: tab.id},
             files: ['contentScript.js']
           });
-          // Give the script a bit more time to initialize before retrying
           await new Promise(resolve => setTimeout(resolve, 600));
           return sendSettingsToContent(settings, retries - 1);
         }
@@ -47,7 +46,6 @@ async function sendSettingsToContent(settings, retries = 5) {
       return false;
     }
 
-    // Check if we're on a valid URL
     try {
       const url = new URL(tab.url);
       const restrictedProtocols = ['chrome:', 'edge:', 'about:', 'chrome-extension:', 'moz-extension:', 'safari-web-extension:'];
@@ -72,7 +70,6 @@ async function sendSettingsToContent(settings, retries = 5) {
       return false;
     }
 
-    // Wait and ping until listener is ready
     const maxAttempts = 6;
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
@@ -142,12 +139,10 @@ function setupTabs() {
   const tabs = document.querySelectorAll('.tab-button');
   const tabPanes = document.querySelectorAll('.tab-pane');
   
-  // Hide all tab panes first
   tabPanes.forEach(pane => {
     pane.style.display = 'none';
   });
   
-  // Show only the active tab pane
   const activeTab = document.querySelector('.tab-button.active');
   if (activeTab) {
     const tabId = `${activeTab.dataset.tab}-tab`;
@@ -156,7 +151,6 @@ function setupTabs() {
       activePane.style.display = 'block';
     }
   } else if (tabs.length > 0) {
-    // If no active tab, activate the first one
     tabs[0].classList.add('active');
     const firstTabId = `${tabs[0].dataset.tab}-tab`;
     const firstPane = document.getElementById(firstTabId);
@@ -165,16 +159,13 @@ function setupTabs() {
     }
   }
 
-  // Add click handlers for tabs
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      // Remove active class from all tabs and hide all panes
       tabs.forEach(t => t.classList.remove('active'));
       tabPanes.forEach(pane => {
         pane.style.display = 'none';
       });
 
-      // Activate clicked tab and show its pane
       tab.classList.add('active');
       const tabId = `${tab.dataset.tab}-tab`;
       const pane = document.getElementById(tabId);
@@ -208,12 +199,12 @@ function setupCollapsibleSections() {
 
       const sectionId = section.getAttribute('aria-controls');
       if (sectionId) {
-        chrome.storage.sync.set({ [sectionId]: !isExpanded });
+        chrome.storage.local.set({ [sectionId]: !isExpanded });
       }
     });
   });
 
-  chrome.storage.sync.get(['text-settings', 'display-settings'], (result) => {
+  chrome.storage.local.get(['text-settings', 'display-settings'], (result) => {
     if (result['text-settings'] !== undefined) {
       const section = document.querySelector('[aria-controls="text-settings"]');
       if (section) {
@@ -235,10 +226,6 @@ function setupCollapsibleSections() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Initialize UI components
-  // Removed: setupTabs() and setupCollapsibleSections() - no longer needed with column layout
-  
-  // Initialize form elements
   const highContrastToggle = document.getElementById('highContrast');
   const textSizeSlider = document.getElementById('textSize');
   const textSizeValue = document.getElementById('textSizeValue');
@@ -254,11 +241,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const clearHistoryBtn = document.getElementById('clearHistoryBtn');
   const statusEl = document.getElementById('status');
   
-  // Initialize annotations after a short delay to ensure DOM is ready
   console.log('Starting initialization...');
   setTimeout(() => {
-    
-    // Log button states after initialization
     console.log('Apply button state:', {
       exists: !!applyBtn,
       type: applyBtn?.type,
@@ -290,7 +274,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
   
-  chrome.storage.sync.get(null, (settings) => {
+  chrome.storage.local.get(null, (settings) => {
     highContrastToggle.checked = settings.highContrast || false;
     textSizeSlider.value = settings.textSize || 100;
     textSizeValue.textContent = `${textSizeSlider.value}%`;
@@ -323,7 +307,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       lineSpacingValue.textContent = `${Math.round(currentLineSpacing * 100)}%`;
     }
   });
-  // Apply Settings button: apply current values on demand
+
   if (applyBtn) { 
     console.log('Setting up Apply button event listener');
     applyBtn.addEventListener('click', async (e) => {
@@ -349,8 +333,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         
         console.log('Tab found:', tab);
-        
-        // Get current settings from the form with null checks
+
         const settings = {
           highContrast: highContrastToggle?.checked || false,
           textSize: textSizeSlider ? parseInt(textSizeSlider.value) : 100,
@@ -361,16 +344,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         console.log('Sending settings to content script:', settings);
         
-        // Save settings to storage
-        await chrome.storage.sync.set(settings);
+        await chrome.storage.local.set(settings);
         console.log('Settings saved to storage');
         
-        // Inject and send message to content script
         const success = await injectAndSendMessage(settings);
         
         if (success) {
           status('Settings applied successfully!');
-          // Hide status after 3 seconds
           setTimeout(() => {
             if (statusEl) statusEl.style.display = 'none';
           }, 3000);
@@ -388,7 +368,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
   
-  // Reset to Defaults button
   if (resetBtn) {
     console.log('Setting up Reset button event listener');
     resetBtn.addEventListener('click', async (e) => {
@@ -405,7 +384,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       try {
         console.log('Processing reset...');
-        // Set default values in the UI
         highContrastToggle.checked = false;
         textSizeSlider.value = 100;
         textSizeValue.textContent = '100%';
@@ -430,7 +408,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           lineSpacing: 1.0,
         };
         
-        await chrome.storage.sync.set(defaultSettings);
+        await chrome.storage.local.set(defaultSettings);
         
         const success = await injectAndSendMessage(defaultSettings);
         
@@ -452,7 +430,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Summarize Page button
+
   if (summarizePageBtn) {
     console.log('Setting up Summarize Page button event listener');
     summarizePageBtn.addEventListener('click', async (e) => {
@@ -471,7 +449,6 @@ document.addEventListener('DOMContentLoaded', async () => {
           statusEl.style.display = 'block';
         }
 
-        // Get page content
         const results = await chrome.scripting.executeScript({
           target: { tabId: tab.id },
           function: () => {
@@ -491,7 +468,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             statusEl.className = 'status-message info show';
           }
 
-          // Generate summary using background script
+
           const summaryResponse = await chrome.runtime.sendMessage({
             action: 'summarizeText',
             text: pageData.text,
@@ -509,7 +486,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             statusEl.className = 'status-message info show';
           }
 
-          // Save the summary using background script
           const noteResponse = await chrome.runtime.sendMessage({
             action: 'addNote',
             summary: summary,
@@ -526,7 +502,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             statusEl.className = 'status-message success show';
           }
 
-          // Open notes page
           const url = chrome.runtime.getURL('notes.html');
           await chrome.tabs.create({ url });
 
@@ -545,7 +520,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Clear AI History button
   if (clearHistoryBtn) {
     console.log('Setting up Clear AI History button event listener');
     clearHistoryBtn.addEventListener('click', async (e) => {
@@ -553,7 +527,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.log('Clear AI History button clicked');
 
       try {
-        const data = await chrome.storage.sync.get('annotations');
+        const data = await chrome.storage.local.get('annotations');
         const notes = Array.isArray(data.annotations) ? data.annotations : [];
 
         if (notes.length === 0) {
@@ -569,7 +543,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (confirm(`Clear all ${notes.length} AI summaries? This action cannot be undone.`)) {
-          await chrome.storage.sync.set({ annotations: [] });
+          await chrome.storage.local.set({ annotations: [] });
 
           if (statusEl) {
             statusEl.textContent = `Cleared ${notes.length} AI summaries`;
@@ -591,7 +565,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Open AI Summaries button (existing functionality)
   if (openSummariesBtn) {
     console.log('Setting up Open AI Summaries button event listener');
     openSummariesBtn.addEventListener('click', async (e) => {

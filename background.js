@@ -72,7 +72,6 @@ class APIService {
 
 let apiService = null;
 
-// Initialize API service
 async function initializeAPIService() {
   if (!apiService) {
     apiService = new APIService();
@@ -86,7 +85,6 @@ async function initializeAPIService() {
   return apiService;
 }
 
-// Summarize text using Gemini
 async function summarizeText(text, context = '') {
   const service = await initializeAPIService();
   if (!service) {
@@ -96,7 +94,7 @@ async function summarizeText(text, context = '') {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync.set({
+  chrome.storage.local.set({
     highContrast: false,
     textSize: 100,
     dyslexicFont: false,
@@ -188,16 +186,32 @@ async function addNote(summaryText, tabInfo, originalSelection) {
     original: originalSelection?.slice(0, 2000) || ''
   };
 
-  const data = await chrome.storage.sync.get('annotations');
+  const data = await chrome.storage.local.get('annotations');
   const annotations = Array.isArray(data.annotations) ? data.annotations : [];
   annotations.push(annotation);
-  await chrome.storage.sync.set({ annotations });
+  await chrome.storage.local.set({ annotations });
   return annotation;
 }
 
 async function openNotesPage() {
-  const url = chrome.runtime.getURL('notes.html');
-  await chrome.tabs.create({ url });
+  try {
+    const tabs = await chrome.tabs.query({ url: chrome.runtime.getURL('notes.html') });
+    
+    if (tabs.length > 0) {
+      await chrome.tabs.update(tabs[0].id, { active: true });
+      await chrome.windows.update(tabs[0].windowId, { focused: true });
+    } else {
+      const url = chrome.runtime.getURL('notes.html');
+      await chrome.tabs.create({ 
+        url,
+        active: true
+      });
+    }
+  } catch (error) {
+    console.error('Error opening notes page:', error);
+    const url = chrome.runtime.getURL('notes.html');
+    await chrome.tabs.create({ url });
+  }
 }
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
