@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "WebAble",
-    "version": "2.11.0",
+    "version": "2.12.0",
     "description": "Accessibility and AI to let EVERYONE access the internet",
     "icons": {
         "16": "icons/icon16.png",

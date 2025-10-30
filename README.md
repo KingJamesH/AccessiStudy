@@ -1,7 +1,7 @@
 # WebAble - Accessibility and AI tools to let EVERYONE access the internet 
-Around [15% of the US population](https://www.supportivecareaba.com/statistics/learning-disabilities) has a learning disability. Only around [10% of web pages](https://webaim.org/projects/million/) meet basic accessibility standards. 
+Around [15% of the US population](https://www.supportivecareaba.com/statistics/learning-disabilities) has a learning disability. Only around [5% of the top 1,000,000 web pages](https://webaim.org/projects/million/) meet basic accessibility standards. 
 
-Introducing: **WebAble**. WebAble is a Google Extension that allows the user to manipulate the visual appearance of any webpage to improve accessibility. It also features AI tools to summarize text and even whole websites to make using the internet easier and more accessible for everyone. While there are some apps and extensions that can help with accessibility, almost all of them only address one aspect, and most of them are complex and hard to use. WebAble is a simple  extension that addresses multiple aspects of accessibility in one spot, helping everyone  better access the web.
+Introducing: **WebAble**. WebAble is an AI-powered Chrome extension that enhances web accessibility by allowing users to customize web page appearance and summarize content, making the internet easier to navigate for people with learning, cognitive, and visual disabilities. While there are some apps and extensions that can help with accessibility, almost all of them only address one aspect, and most of them are complex and hard to use. WebAble is a simple  extension that addresses multiple aspects of accessibility in one spot, helping everyone  better access the web.
 
 ## How It's made:
 **Tech Used:** HTML, CSS, JavaScript, Chrome Extension API, Gemini 2.0 API
@@ -17,7 +17,7 @@ All changes are applied once the user clicks the "Apply Accessibility" button.
 
 ### AI features: How it works
 
-WebAble uses the Gemini 2.0 API to generate AI summaries of webpages and text. It also uses the Chrome extension API to store user preferences and send messages to the content script. When selecting a section of text on a web page, the user can right-click and "Summarize selection" to generate a summary of the selected text. The user can also click "Summarize Page" in the extension to generate a summary of the entire webpage.
+WebAble uses the Gemini 2.0 Flash model through Google's Generative Language API to generate AI summaries of webpages and text. It also uses the Chrome extension API to store user preferences and send messages to the content script. When selecting a section of text on a web page, the user can right-click and "Summarize selection" to generate a summary of the selected text. The user can also click "Summarize Page" in the extension to generate a summary of the entire webpage.
 
 The summaries are then stored in Chrome's storage API and can be viewed in the by clicking "View AI Summaries" in the extension.
 
