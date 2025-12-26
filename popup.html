@@ -18,19 +18,12 @@
         <i class="fas fa-universal-access header-icon"></i>
         <h1>WebAble</h1>
       </div>
-      <p class="header-subtitle">Accessibility and AI tools to let EVERYONE access the internet</p>
+      <p class="header-subtitle">Accessibility tools to let EVERYONE access the internet</p>
     </header>
     
     <div class="main-content">
-      <div class="columns-container">
-        <!-- Column 1: Accessibility Functions -->
-        <div class="column accessibility-column">
-          <div class="column-header">
-            <i class="fas fa-universal-access"></i>
-            <h2>Accessibility Tools</h2>
-          </div>
-
-          <div class="settings-section">
+      <div class="settings-container">
+        <div class="settings-section">
             <!-- <div class="section-title">
               <i class="fas fa-text-height"></i>
               <h3>Text Settings</h3>
@@ -69,13 +62,7 @@
               </label>
               <input type="range" id="lineSpacing" min="1.0" max="3.0" step="0.1" value="1.0" aria-label="Adjust line spacing">
             </div>
-          </div>
 
-          <div class="settings-section">
-            <!-- <div class="section-title">
-              <i class="fas fa-adjust"></i>
-              <h3>Display Settings</h3>
-            </div> -->
             <div class="setting">
               <label for="dyslexicFont">
                 <div class="setting-name-row">
@@ -94,68 +81,27 @@
               </label>
             </div>
           </div>
+
+        <div class="action-buttons">
+          <button id="applyBtn" class="ai-feature-btn">
+            <i class="fas fa-check"></i>
+            <div class="ai-feature-content">
+              <span class="ai-feature-title">Apply Accessibility</span>
+              <span class="ai-feature-desc">Apply changes to webpage</span>
+            </div>
+          </button>
+
+          <button id="resetBtn" class="ai-feature-btn secondary">
+            <i class="fas fa-undo"></i>
+            <div class="ai-feature-content">
+              <span class="ai-feature-title">Reset to Defaults</span>
+              <span class="ai-feature-desc">Restore original settings</span>
+            </div>
+          </button>
         </div>
 
-        <!-- Column 2: AI Functions -->
-        <div class="column ai-column">
-          <div class="column-header">
-            <i class="fas fa-robot"></i>
-            <h2>AI Assistant</h2>
-          </div>
-
-          <div class="ai-section">
-            <button id="summarizePageBtn" class="ai-feature-btn">
-              <i class="fas fa-file-alt"></i>
-              <div class="ai-feature-content">
-                <span class="ai-feature-title">Summarize Page</span>
-                <span class="ai-feature-desc">AI summary of current page</span>
-              </div>
-            </button>
-
-            <button id="openSummariesBtn" class="ai-feature-btn">
-              <i class="fas fa-list"></i>
-              <div class="ai-feature-content">
-                <span class="ai-feature-title">View AI Summaries</span>
-                <span class="ai-feature-desc">Browse saved summaries</span>
-              </div>
-            </button>
-
-            <button id="clearHistoryBtn" class="ai-feature-btn danger">
-              <i class="fas fa-trash-alt"></i>
-              <div class="ai-feature-content">
-                <span class="ai-feature-title">Clear AI History</span>
-                <span class="ai-feature-desc">Delete all saved summaries</span>
-              </div>
-            </button>
-          </div>
-
-          <div class="settings-section">
-            <div class="column-header">
-              <i class="fas fa-universal-access"></i>
-              <h2>Apply Settings</h2>
-            </div>
-            <div class="action-buttons">
-              <button id="applyBtn" class="ai-feature-btn">
-                <i class="fas fa-check"></i>
-                <div class="ai-feature-content">
-                  <span class="ai-feature-title">Apply Accessibility</span>
-                  <span class="ai-feature-desc">Apply changes to webpage</span>
-                </div>
-              </button>
-
-              <button id="resetBtn" class="ai-feature-btn secondary">
-                <i class="fas fa-undo"></i>
-                <div class="ai-feature-content">
-                  <span class="ai-feature-title">Reset to Defaults</span>
-                  <span class="ai-feature-desc">Restore original settings</span>
-                </div>
-              </button>
-            </div>
-
-            <!-- Status Messages -->
-            <div id="status" class="status-message" style="display: none;"></div>
-          </div>
-        </div>
+        <!-- Status Messages -->
+        <div id="status" class="status-message" style="display: none;"></div>
       </div>
     </div>
   </div>

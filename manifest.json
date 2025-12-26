@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "WebAble",
     "version": "2.12.0",
-    "description": "Accessibility and AI to let EVERYONE access the internet",
+    "description": "Accessibility tools to let EVERYONE access the internet",
     "icons": {
         "16": "icons/icon16.png",
         "48": "icons/icon48.png",
@@ -12,11 +12,7 @@
       "activeTab",
       "storage",
       "scripting",
-      "webRequest",
-      "contextMenus"
-    ],
-    "host_permissions": [
-      "https://generativelanguage.googleapis.com/*"
+      "webRequest"
     ],
     "content_security_policy": {
       "extension_pages": "script-src 'self'; object-src 'self'"
@@ -26,30 +22,23 @@
         "resources": [
           "contentScript.js",
           "styles.css",
-          "config.local.json",
           "fonts/OpenDyslexic-Regular.otf",
           "fonts/OpenDyslexic-Bold.otf",
           "fonts/OpenDyslexic-Italic.otf",
           "fonts/OpenDyslexic-BoldItalic.otf",
           "popup.js",
-          "notes.js",
           "icons/*"
         ],
         "matches": ["<all_urls>"]
-      },
-      {
-        "resources": ["notes.html"],
-        "matches": ["<all_urls>"],
-        "use_dynamic_url": true
       }
     ],
     "action": {
       "default_popup": "popup.html",
-        "default_icon": {
-            "16": "icons/icon16.png",
-            "48": "icons/icon48.png",
-            "128": "icons/icon128.png"
-        }
+      "default_icon": {
+          "16": "icons/icon16.png",
+          "48": "icons/icon48.png",
+          "128": "icons/icon128.png"
+      }
     },
     "background": {
       "service_worker": "background.js"

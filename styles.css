@@ -255,7 +255,7 @@ input[type="range"]:active::-webkit-slider-thumb {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 6px;
@@ -291,6 +291,8 @@ input[type="range"]:active::-webkit-slider-thumb {
 .action-buttons .ai-feature-btn.secondary {
   border-color: var(--danger-color);
   color: var(--danger-color);
+  justify-content: center;
+  text-align: center;
 }
 
 .action-buttons .ai-feature-btn.secondary:hover {
