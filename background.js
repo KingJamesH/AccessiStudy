@@ -1,13 +1,10 @@
-
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({
     highContrast: false,
     textSize: 100,
     dyslexicFont: false,
     textSpacing: 1.0,
-    lineSpacing: 1.0,
-    overlayColor: '#000000',
-    overlayOpacity: 0
+    lineSpacing: 1.0
   });
 
 });

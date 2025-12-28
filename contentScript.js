@@ -366,33 +366,4 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
     } else if (styleElement) {
       styleElement.remove();
     }
-  
-    if (settings.overlayColor && settings.overlayOpacity > 0) {
-      let overlay = document.getElementById('accessibility-overlay');
-      
-      if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.id = 'accessibility-overlay';
-        overlay.style.cssText = `
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          z-index: 2147483647;
-          mix-blend-mode: overlay;
-        `;
-        document.documentElement.appendChild(overlay);
-      }
-      
-      overlay.style.backgroundColor = settings.overlayColor;
-      overlay.style.opacity = settings.overlayOpacity;
-    } else {
-      const overlay = document.getElementById('accessibility-overlay');
-      if (overlay) {
-        overlay.remove();
-      }
-    }
-  }
-  
+}
