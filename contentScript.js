@@ -300,7 +300,7 @@ if (window === window.top && !window.location.href.startsWith('chrome-extension:
       
       const letterSpacing = (textScale - 1) * 0.05;  
       const wordSpacing = (textScale - 1) * 0.1;    
-      const lineHeight = lineScale; // Use the line scale directly for more noticeable changes
+      const lineHeight = lineScale;
       
       console.log('Calculated values - textScale:', textScale, 'lineScale:', lineScale, 
                  'letter:', letterSpacing, 'word:', wordSpacing, 'line:', lineHeight);

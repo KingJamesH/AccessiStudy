@@ -195,8 +195,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       };
 
-      // Apply settings silently
-      
       try {
         console.log('Getting current tab...');
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -222,7 +220,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const success = await injectAndSendMessage(settings);
         
         if (success) {
-          // Settings applied silently - no status message
         } else {
           throw new Error('Failed to apply settings to the page');
         }
@@ -274,7 +271,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const success = await injectAndSendMessage(defaultSettings);
         
         if (success) {
-          // Settings reset silently - no status message
         } else {
           throw new Error('Failed to apply default settings');
         }

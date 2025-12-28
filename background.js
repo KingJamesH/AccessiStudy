@@ -21,7 +21,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
         sendResponse({ status: 'ok' });
       });
-      return true; // async response
+      return true;
     }
 
     if (request.action === 'injectCSS') {
@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         css: request.css || ''
       }).then(() => sendResponse({ status: 'ok' }))
         .catch(err => sendResponse({ status: 'error', message: String(err) }));
-      return true; // async
+      return true;
     }
 
   } catch (e) {
