@@ -490,34 +490,6 @@ input[type="checkbox"]:focus-visible {
   cursor: help;
 }
 
-#applyBtn {
-  background: var(--primary-hover);
-  border: 1px solid var(--primary-hover);
-  border-radius: 6px;
-  padding: 10px 16px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-#applyBtn:hover {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
-}
-
-#applyBtn i,
-#applyBtn .ai-feature-title {
-  color: #ffffff;
-}
-
-#applyBtn .ai-feature-desc {
-  color: rgba(255, 255, 255, 0.8);
-}
-
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
