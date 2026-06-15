@@ -109,42 +109,62 @@ document.addEventListener('DOMContentLoaded', async () => {
   const textSpacingValue = document.getElementById('textSpacingValue');
   const lineSpacingSlider = document.getElementById('lineSpacing');
   const lineSpacingValue = document.getElementById('lineSpacingValue');
-  const applyBtn = document.getElementById('applyBtn');
   const resetBtn = document.getElementById('resetBtn');
   const statusEl = document.getElementById('status');
-  
+
   console.log('Starting initialization...');
-  setTimeout(() => {
-    console.log('Apply button state:', {
-      exists: !!applyBtn,
-      type: applyBtn?.type,
-      disabled: applyBtn?.disabled
-    });
-    
-    console.log('Reset button state:', {
-      exists: !!resetBtn,
-      type: resetBtn?.type,
-      disabled: resetBtn?.disabled
-    });
-  }, 100);
-  
+
+  // Build the current settings object from the controls.
+  function gatherSettings() {
+    return {
+      highContrast: highContrastToggle?.checked || false,
+      textSize: textSizeSlider ? parseInt(textSizeSlider.value, 10) : 100,
+      dyslexicFont: dyslexicFontToggle?.checked || false,
+      textSpacing: textSpacingSlider ? parseFloat(textSpacingSlider.value) : 1.0,
+      lineSpacing: lineSpacingSlider ? parseFloat(lineSpacingSlider.value) : 1.0,
+    };
+  }
+
+  // Persist + push the current settings to the active page. Uses
+  // sendSettingsToContent so the content script is only injected once
+  // (on the first push), not on every slider tick.
+  async function applyLive() {
+    const settings = gatherSettings();
+    try {
+      await chrome.storage.local.set(settings);
+      await sendSettingsToContent(settings);
+    } catch (error) {
+      console.error('Live apply failed:', error);
+    }
+  }
+
+  // Sliders fire continuously while dragging; debounce the page update.
+  const debouncedApply = debounce(applyLive, 150);
+
   textSizeSlider.addEventListener('input', () => {
     textSizeValue.textContent = `${textSizeSlider.value}%`;
+    debouncedApply();
   });
-  
+
   if (textSpacingValue) {
     textSpacingSlider.addEventListener('input', () => {
       const pct = Math.round(parseFloat(textSpacingSlider.value) * 100);
       textSpacingValue.textContent = `${pct}%`;
+      debouncedApply();
     });
   }
-  
+
   if (lineSpacingValue) {
     lineSpacingSlider.addEventListener('input', () => {
       const pct = Math.round(parseFloat(lineSpacingSlider.value) * 100);
       lineSpacingValue.textContent = `${pct}%`;
+      debouncedApply();
     });
   }
+
+  // Toggles are discrete on/off, so apply immediately on change.
+  highContrastToggle.addEventListener('change', applyLive);
+  dyslexicFontToggle.addEventListener('change', applyLive);
   
   chrome.storage.local.get(null, (settings) => {
     highContrastToggle.checked = settings.highContrast || false;
@@ -180,60 +200,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  if (applyBtn) { 
-    console.log('Setting up Apply button event listener');
-    applyBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      console.log('Apply button clicked');
-
-      const status = (message, isError = false) => {
-        console.log(`[Status] ${message}`, isError ? '(Error)' : '');
-        if (statusEl) {
-          statusEl.textContent = message;
-          statusEl.className = isError ? 'status-message error show' : 'status-message info show';
-          statusEl.style.display = 'block';
-        }
-      };
-
-      try {
-        console.log('Getting current tab...');
-        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-        if (!tab) {
-          throw new Error('No active tab found');
-        }
-        
-        console.log('Tab found:', tab);
-
-        const settings = {
-          highContrast: highContrastToggle?.checked || false,
-          textSize: textSizeSlider ? parseInt(textSizeSlider.value) : 100,
-          dyslexicFont: dyslexicFontToggle?.checked || false,
-          textSpacing: textSpacingSlider ? parseFloat(textSpacingSlider.value) : 1.0,
-          lineSpacing: lineSpacingSlider ? parseFloat(lineSpacingSlider.value) : 1.5,
-        };
-        
-        console.log('Sending settings to content script:', settings);
-        
-        await chrome.storage.local.set(settings);
-        console.log('Settings saved to storage');
-        
-        const success = await injectAndSendMessage(settings);
-        
-        if (success) {
-        } else {
-          throw new Error('Failed to apply settings to the page');
-        }
-    } catch (error) {
-      console.error('Error applying settings:', error);
-      if (statusEl) {
-        statusEl.textContent = 'Error applying settings. Please try again.';
-        statusEl.className = 'status-message error show';
-        statusEl.style.display = 'block';
-      }
-    }
-    });
-  }
-  
   if (resetBtn) {
     console.log('Setting up Reset button event listener');
     resetBtn.addEventListener('click', async (e) => {
