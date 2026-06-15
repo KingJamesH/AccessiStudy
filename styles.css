@@ -28,7 +28,7 @@
 
 .popup-body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  width: 698px;
+  width: 400px;
   padding: 0;
   margin: 0;
   background-color: var(--bg-color);
@@ -592,11 +592,6 @@ h3 {
 }
 
 @media (max-width: 720px) {
-  .popup-body {
-    width: 100vw;
-    max-width: 698px;
-  }
-
   .columns-container {
     padding: 16px;
     gap: 16px;
@@ -609,10 +604,6 @@ h3 {
 }
 
 @media (max-width: 600px) {
-  .popup-body {
-    width: 100vw;
-  }
-
   .columns-container {
     flex-direction: column;
     gap: 16px;
