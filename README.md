@@ -29,3 +29,24 @@ The next step for WebAble would be implementing a text-to-speech feature. The us
 2. Enable "Developer mode"
 3. Click "Load unpacked"
 4. Select the `extension/` folder
+
+## Deploying the website (Vercel)
+The site in `landing/` is a static site (no build step). Because it lives in a
+subfolder, point Vercel at it via the project's **Root Directory** setting.
+
+**Option A — Git integration (recommended):**
+1. Push this repo to GitHub.
+2. In Vercel: **New Project → import `jameshou28/WebAble`**.
+3. Set **Root Directory** to `landing`.
+4. **Framework Preset:** Other. Leave Build Command and Output Directory empty.
+5. Deploy. Every push to the default branch redeploys automatically.
+
+**Option B — Vercel CLI:**
+```bash
+cd landing
+vercel        # preview deploy
+vercel --prod # production deploy
+```
+
+`landing/vercel.json` handles the rest: clean URLs (`/privacy` instead of
+`/privacy.html`), security headers, and long-lived caching for `assets/`.
