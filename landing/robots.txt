@@ -1,2 +1,5 @@
 User-agent: *
 Allow: /
+
+# UPDATE the domain if you deploy somewhere other than web-able.vercel.app
+Sitemap: https://web-able.vercel.app/sitemap.xml
