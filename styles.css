@@ -26,6 +26,20 @@
   --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('fonts/OpenDyslexic-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Let the dyslexic-font option preview itself in OpenDyslexic. */
+.dyslexic-preview {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+  letter-spacing: 0.02em;
+}
+
 .popup-body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   width: 400px;
