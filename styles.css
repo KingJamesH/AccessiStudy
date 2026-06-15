@@ -302,18 +302,23 @@ input[type="range"]:active::-webkit-slider-thumb {
 }
 
 .action-buttons .ai-feature-btn.secondary {
-  border-color: var(--danger-color);
-  color: var(--danger-color);
+  border-color: var(--border-color);
+  background: var(--secondary-bg);
+  color: var(--secondary-text);
   justify-content: center;
   text-align: center;
 }
 
+.action-buttons .ai-feature-btn.secondary i {
+  color: var(--secondary-text);
+}
+
 .action-buttons .ai-feature-btn.secondary:hover {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: var(--danger-color);
-  color: var(--danger-color);
+  background: var(--secondary-hover);
+  border-color: var(--secondary-text);
+  color: var(--text-color);
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .ai-feature-title {
