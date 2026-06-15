@@ -102,6 +102,7 @@ img { max-width: 100%; display: block; }
 /* The button keeps its own colors — outrank the generic nav-link color. */
 .nav-links a.btn-primary { color: #fff; }
 .nav-links a.btn-primary:hover { color: #fff; }
+.nav-links .nav-icon { display: inline-flex; align-items: center; font-size: 20px; }
 
 /* ---------- Buttons ---------- */
 .btn {
