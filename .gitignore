@@ -7,3 +7,6 @@ config.local.json
 # extra md files
 brainstorming.md 
 oldreadme.md
+
+.claude
+CLAUDE.md
