@@ -99,6 +99,9 @@ img { max-width: 100%; display: block; }
   font-size: 16px;
 }
 .nav-links a:hover { color: var(--ink); }
+/* The button keeps its own colors — outrank the generic nav-link color. */
+.nav-links a.btn-primary { color: #fff; }
+.nav-links a.btn-primary:hover { color: #fff; }
 
 /* ---------- Buttons ---------- */
 .btn {
