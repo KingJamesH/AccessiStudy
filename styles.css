@@ -159,6 +159,13 @@
   font-feature-settings: "tnum";
 }
 
+/* Checkbox rows: keep the box next to its label instead of stretching them
+   to opposite edges (space-between is only correct for slider name/value rows). */
+.setting-name-row:has(input[type="checkbox"]) {
+  justify-content: flex-start;
+  gap: 10px;
+}
+
 input[type="checkbox"] {
   -webkit-appearance: none;
   -moz-appearance: none;
