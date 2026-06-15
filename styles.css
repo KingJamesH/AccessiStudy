@@ -95,7 +95,30 @@
 .settings-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
+}
+
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.group-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--secondary-text);
+  margin: 0 0 2px 2px;
+}
+
+.setting-icon {
+  color: var(--primary-color);
+  font-size: 13px;
+  width: 16px;
+  text-align: center;
+  margin-right: 7px;
 }
 
 .section-title {
@@ -142,6 +165,8 @@
 }
 
 .setting-name {
+  display: inline-flex;
+  align-items: center;
   font-weight: 500;
   font-size: 14px;
   color: var(--text-color);

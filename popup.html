@@ -24,61 +24,71 @@
     <div class="main-content">
       <div class="settings-container">
         <div class="settings-section">
-            <!-- <div class="section-title">
-              <i class="fas fa-text-height"></i>
-              <h3>Text Settings</h3>
-            </div> -->
-            <div class="setting">
-              <label for="textSize">
-                <div class="setting-name-row">
-                  <span class="setting-name">Text Size</span>
-                  <span class="value-display" id="textSizeValue">100%</span>
+            <div class="settings-group">
+              <h2 class="group-title">Text</h2>
+              <div class="setting">
+                <label for="textSize">
+                  <div class="setting-name-row">
+                    <span class="setting-name"><i class="fas fa-text-height setting-icon"></i>Text Size</span>
+                    <span class="value-display" id="textSizeValue">100%</span>
+                  </div>
+                </label>
+                <input type="range" id="textSize" min="80" max="200" step="5" value="100" aria-label="Adjust text size">
+                <div class="range-labels">
+                  <span>A</span>
+                  <span>Aa</span>
+                  <span>AA</span>
                 </div>
-              </label>
-              <input type="range" id="textSize" min="80" max="200" step="5" value="100" aria-label="Adjust text size">
-              <div class="range-labels">
-                <span>A</span>
-                <span>Aa</span>
-                <span>AA</span>
+              </div>
+
+              <div class="setting">
+                <label for="textSpacing">
+                  <div class="setting-name-row">
+                    <span class="setting-name"><i class="fas fa-text-width setting-icon"></i>Letter Spacing</span>
+                    <span class="value-display accent" id="textSpacingValue">100%</span>
+                  </div>
+                </label>
+                <input type="range" id="textSpacing" min="1.0" max="3.0" step="0.1" value="1.0" aria-label="Adjust word spacing">
+                <div class="range-labels">
+                  <span>Normal</span>
+                  <span>Wide</span>
+                </div>
+              </div>
+
+              <div class="setting">
+                <label for="lineSpacing">
+                  <div class="setting-name-row">
+                    <span class="setting-name"><i class="fas fa-align-justify setting-icon"></i>Line Spacing</span>
+                    <span class="value-display accent" id="lineSpacingValue">100%</span>
+                  </div>
+                </label>
+                <input type="range" id="lineSpacing" min="1.0" max="3.0" step="0.1" value="1.0" aria-label="Adjust line spacing">
+                <div class="range-labels">
+                  <span>Normal</span>
+                  <span>Wide</span>
+                </div>
               </div>
             </div>
 
-            <div class="setting">
-              <label for="textSpacing">
-                <div class="setting-name-row">
-                  <span class="setting-name">Letter Spacing</span>
-                  <span class="value-display accent" id="textSpacingValue">100%</span>
-                </div>
-              </label>
-              <input type="range" id="textSpacing" min="1.0" max="3.0" step="0.1" value="1.0" aria-label="Adjust word spacing">
-            </div>
+            <div class="settings-group">
+              <h2 class="group-title">Display</h2>
+              <div class="setting">
+                <label for="dyslexicFont">
+                  <div class="setting-name-row">
+                    <input type="checkbox" id="dyslexicFont" aria-label="Enable dyslexic-friendly font">
+                    <span class="setting-name dyslexic-preview">Dyslexia-Friendly Font</span>
+                  </div>
+                </label>
+              </div>
 
-            <div class="setting">
-              <label for="lineSpacing">
-                <div class="setting-name-row">
-                  <span class="setting-name">Line Spacing</span>
-                  <span class="value-display accent" id="lineSpacingValue">100%</span>
-                </div>
-              </label>
-              <input type="range" id="lineSpacing" min="1.0" max="3.0" step="0.1" value="1.0" aria-label="Adjust line spacing">
-            </div>
-
-            <div class="setting">
-              <label for="dyslexicFont">
-                <div class="setting-name-row">
-                  <input type="checkbox" id="dyslexicFont" aria-label="Enable dyslexic-friendly font">
-                  <span class="setting-name">Dyslexia-Friendly Font</span>
-                </div>
-              </label>
-            </div>
-
-            <div class="setting">
-              <label for="highContrast">
-                <div class="setting-name-row">
-                  <input type="checkbox" id="highContrast" aria-label="Enable high contrast mode">
-                  <span class="setting-name">High Contrast Mode</span>
-                </div>
-              </label>
+              <div class="setting">
+                <label for="highContrast">
+                  <div class="setting-name-row">
+                    <input type="checkbox" id="highContrast" aria-label="Enable high contrast mode">
+                    <span class="setting-name"><i class="fas fa-circle-half-stroke setting-icon"></i>High Contrast Mode</span>
+                  </div>
+                </label>
+              </div>
             </div>
           </div>
 
