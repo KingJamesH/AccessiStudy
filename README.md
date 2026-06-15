@@ -1,52 +1,72 @@
-# WebAble - Accessibility tools to let EVERYONE access the internet 
-Around [15% of the US population](https://www.supportivecareaba.com/statistics/learning-disabilities) has a learning disability. Only around [5% of the top 1,000,000 web pages](https://webaim.org/projects/million/) meet basic accessibility standards. 
+<p align="center">
+  <img src="landing/assets/og-image.png" alt="WebAble — make any website easier to read. A free Chrome extension." width="100%">
+</p>
 
-Introducing: **WebAble**. WebAble is a Chrome extension that enhances web accessibility by allowing users to customize web page appearance, making the internet easier to navigate for people with learning, cognitive, and visual disabilities. While there are some apps and extensions that can help with accessibility, almost all of them only address one aspect, and most of them are complex and hard to use. WebAble is a simple extension that addresses multiple aspects of accessibility in one spot, helping everyone better access the web.
+<h1 align="center">WebAble</h1>
 
-## How It's made:
-**Tech Used:** HTML, CSS, JavaScript, Chrome Extension API
+<p align="center">
+  <strong>Accessibility tools to let everyone access the internet.</strong><br>
+  Resize text, switch to a dyslexia-friendly font, open up spacing, and turn on high contrast — on any website, instantly.
+</p>
 
-### Accessibility features: How it works  
-WebAble uses DOM manipulation to change the appearance of any webpage to improve accessibility. It also uses the Chrome extension API to store user preferences and send messages to the content script. The user can change the following: 
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/webable-accessibility-ass/kbclhcipnkiohhbjiagecmckemkpaech">
+    <img alt="Add to Chrome" src="https://img.shields.io/badge/Add%20to%20Chrome-Free-2563eb?style=for-the-badge&logo=googlechrome&logoColor=white">
+  </a>
+  <a href="https://web-able.vercel.app">
+    <img alt="Website" src="https://img.shields.io/badge/Website-web--able.vercel.app-2563eb?style=for-the-badge">
+  </a>
+</p>
 
-1. Text size, spacing between letters (word spacing), line spacing
-2. Dyslexia-friendly font (OpenDyslexic)
-3. High contrast mode
+---
 
-All changes are applied once the user clicks the "Apply Accessibility" button. 
+## What is WebAble?
 
-## The future of WebAble:
-The next step for WebAble would be implementing a text-to-speech feature. The user would be able to select text on a page and select text-to speech to read the text out loud. This would be especially helpful for students with reading disabilities. I also hope to make the UI cleaner and more compact in the future. 
+Around **15%** of the U.S. population has a learning disability, yet only about **5%** of the top one million web pages meet basic accessibility standards. Most accessibility tools fix just one thing and are complicated to use.
 
-## Repository structure
-- `extension/` — the Chrome extension (load this folder unpacked)
-- `landing/` — the marketing website (home page + privacy policy)
+**WebAble** brings the essentials together in one simple popup. Open it on any page and adjust how the web reads — text size, font, spacing, and contrast — with changes applied live as you go. Everything is stored locally on your device; nothing is ever sent anywhere.
 
-## Instructions:
-### Step 1. Download the extension files
-### Step 2: Installing the Extension
-1. Go to chrome://extensions/
-2. Enable "Developer mode"
-3. Click "Load unpacked"
-4. Select the `extension/` folder
+<p align="center">
+  <img src="landing/assets/popup.png" alt="The WebAble popup: sliders for text size, letter spacing, and line spacing, plus toggles for a dyslexia-friendly font and high contrast mode." width="320">
+</p>
 
-## Deploying the website (Vercel)
-The site in `landing/` is a static site (no build step). Because it lives in a
-subfolder, point Vercel at it via the project's **Root Directory** setting.
+## Features
 
-**Option A — Git integration (recommended):**
-1. Push this repo to GitHub.
-2. In Vercel: **New Project → import `jameshou28/WebAble`**.
-3. Set **Root Directory** to `landing`.
-4. **Framework Preset:** Other. Leave Build Command and Output Directory empty.
-5. Deploy. Every push to the default branch redeploys automatically.
+| Feature | What it does |
+|---|---|
+|**Adjustable text size** | Scale text from 80% to 200% |
+|**Dyslexia-friendly font** | Switch any page to OpenDyslexic, a dyslexia-friendly font |
+|**Letter & line spacing** | Open up the space between letters and lines to reduce crowding |
+|**High contrast mode** | Force light-on-dark text to cut glare on low-contrast pages |
+|**Applies instantly** | Every change shows up on the page as you make it |
 
-**Option B — Vercel CLI:**
-```bash
-cd landing
-vercel        # preview deploy
-vercel --prod # production deploy
+## Install - Chrome Web Store
+**[Add WebAble to Chrome](https://chromewebstore.google.com/detail/webable-accessibility-ass/kbclhcipnkiohhbjiagecmckemkpaech)** — free, one click.
+
+
+
+## How it works
+
+1. **Add WebAble to Chrome.**
+2. **Open it on any page** by clicking the WebAble icon in your toolbar.
+3. **Adjust to taste** — move the sliders and flip the toggles; the page updates as you go.
+
+WebAble injects scoped CSS/DOM changes into the active tab and persists your preferences with `chrome.storage.local`. 
+
+## Project structure
+
+```
+WebAble/
+├── extension/   →  the Chrome extension (load this folder unpacked)
+│   ├── manifest.json, popup.*, contentScript.js, background.js
+│   └── styles.css, fonts/, icons/
+└── landing/     →  the marketing website (https://web-able.vercel.app)
+    ├── index.html, privacy.html, styles.css
+    └── assets/  (icon, screenshots, social card)
 ```
 
-`landing/vercel.json` handles the rest: clean URLs (`/privacy` instead of
-`/privacy.html`), security headers, and long-lived caching for `assets/`.
+## Privacy
+
+WebAble collects **no** browsing history and **no** personal data. Your accessibility
+preferences live only on your device. Full details: **[Privacy Policy](https://web-able.vercel.app/privacy)**.
+
