@@ -205,20 +205,36 @@
   gap: 10px;
 }
 
+/* Toggle switch (these are live on/off modes, not list selections). */
 input[type="checkbox"] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  width: 22px;
-  height: 22px;
-  border: 2px solid var(--border-color);
-  border-radius: 5px;
+  width: 44px;
+  height: 26px;
+  border: 1px solid var(--border-color);
+  border-radius: 13px;
   background-color: var(--input-bg);
   cursor: pointer;
   position: relative;
-  transition: all var(--transition-speed) var(--transition-easing);
+  transition: background-color var(--transition-speed) var(--transition-easing),
+              border-color var(--transition-speed) var(--transition-easing);
   margin: 0;
   flex-shrink: 0;
+}
+
+input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 3px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  transition: left var(--transition-speed) var(--transition-easing);
 }
 
 input[type="checkbox"]:hover {
@@ -226,19 +242,12 @@ input[type="checkbox"]:hover {
 }
 
 input[type="checkbox"]:checked {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
 }
 
 input[type="checkbox"]:checked::after {
-  content: '✓';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 15px;
-  font-weight: bold;
+  left: 23px;
 }
 
 /* Make the whole checkbox row a comfortable click/tap target (>=44px). */
