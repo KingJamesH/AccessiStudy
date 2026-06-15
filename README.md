@@ -22,13 +22,9 @@
 
 ## What is WebAble?
 
-<img src="landing/assets/popup.png" align="right" width="300" alt="The WebAble popup: sliders for text size, letter spacing, and line spacing, plus toggles for a dyslexia-friendly font and high contrast mode.">
-
 Around **15%** of the U.S. population has a learning disability, yet only about **5%** of the top one million web pages meet basic accessibility standards. Most accessibility tools fix just one thing and are complicated to use.
 
 **WebAble** brings the essentials together in one simple popup. Open it on any page and adjust how the web reads — text size, font, spacing, and contrast — with changes applied live as you go. Everything is stored locally on your device; nothing is ever sent anywhere.
-
-<br clear="all">
 
 ## Features
 
