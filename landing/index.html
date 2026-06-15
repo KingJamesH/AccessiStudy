@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebAble — Accessibility tools to let everyone access the internet</title>
+  <meta name="description" content="WebAble is a free Chrome extension that lets you resize text, switch to a dyslexia-friendly font, adjust spacing, and enable high contrast on any website. Private by design — nothing leaves your device.">
+  <link rel="icon" href="assets/icon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html">
+        <img src="assets/icon.png" alt="">
+        WebAble
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a class="nav-hide" href="#features">Features</a>
+        <a class="nav-hide" href="#how">How it works</a>
+        <a href="privacy.html">Privacy</a>
+        <!-- TODO: replace # with your Chrome Web Store listing URL -->
+        <a class="btn btn-primary" href="#" id="install-nav"><i class="fa-brands fa-chrome" aria-hidden="true"></i> Add to Chrome</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <!-- <span class="eyebrow"><i class="fas fa-universal-access" aria-hidden="true"></i> Free Chrome extension</span> -->
+          <h1>Make any website <span class="accent">easier to read.</span></h1>
+          <p class="lead">Resize text, switch to a dyslexia-friendly font, open up spacing, and turn on high contrast — on any page, instantly.</p>
+          <div class="hero-cta">
+            <!-- TODO: replace # with your Chrome Web Store listing URL -->
+            <a class="btn btn-primary btn-lg" href="#"><i class="fa-brands fa-chrome" aria-hidden="true"></i> Add to Chrome — it's free</a>
+            <a class="btn btn-ghost btn-lg" href="#how">See how it works</a>
+          </div>
+          <!-- <p class="hero-note"><i class="fas fa-lock" aria-hidden="true"></i> No account. No tracking. Your settings stay on your device.</p> -->
+        </div>
+        <div class="hero-shot">
+          <img src="assets/popup.png" alt="The WebAble popup showing sliders for text size, letter spacing and line spacing, plus toggles for a dyslexia-friendly font and high contrast mode.">
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats" aria-label="Why accessibility matters">
+      <div class="wrap stats-grid">
+        <div class="stat">
+          <div class="num">15%</div>
+          <p>of the U.S. population has a learning disability. <a href="https://www.supportivecareaba.com/statistics/learning-disabilities" target="_blank" rel="noopener">Source</a></p>
+        </div>
+        <div class="stat">
+          <div class="num">Only 5%</div>
+          <p>of the top one million web pages meet basic accessibility standards. <a href="https://webaim.org/projects/million/" target="_blank" rel="noopener">Source</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Everything you need to read comfortably</h2>
+          <p>Most accessibility tools fix one thing. WebAble brings the essentials together in one simple popup.</p>
+        </div>
+        <div class="features">
+          <article class="feature">
+            <div class="ic"><i class="fas fa-text-height" aria-hidden="true"></i></div>
+            <h3>Adjustable text size</h3>
+            <p>Scale text up from 80% to 200% so you never have to squint at a tiny font again.</p>
+          </article>
+          <article class="feature">
+            <div class="ic"><i class="fas fa-font" aria-hidden="true"></i></div>
+            <h3>Dyslexia-friendly font</h3>
+            <p>Switch any page to OpenDyslexic, a typeface designed to make letters easier to tell apart.</p>
+          </article>
+          <article class="feature">
+            <div class="ic"><i class="fas fa-text-width" aria-hidden="true"></i></div>
+            <h3>Letter &amp; line spacing</h3>
+            <p>Open up the space between letters and lines to reduce crowding and keep your place.</p>
+          </article>
+          <article class="feature">
+            <div class="ic"><i class="fas fa-circle-half-stroke" aria-hidden="true"></i></div>
+            <h3>High contrast mode</h3>
+            <p>Force crisp light-on-dark text to cut glare and sharpen low-contrast pages.</p>
+          </article>
+          <article class="feature">
+            <div class="ic"><i class="fas fa-bolt" aria-hidden="true"></i></div>
+            <h3>Applies instantly</h3>
+            <p>Every change shows up on the page as you make it — drag a slider and watch it update live.</p>
+          </article>
+          <article class="feature">
+            <div class="ic"><i class="fas fa-shield-halved" aria-hidden="true"></i></div>
+            <h3>Private by design</h3>
+            <p>Your preferences are saved locally with Chrome storage. Nothing is sent anywhere.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="alt">
+      <div class="wrap">
+        <div class="section-head center">
+          <h2>Up and running in seconds</h2>
+          <p>No setup, no sign-up. Install it and start adjusting.</p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <div class="n">1</div>
+            <h3>Add to Chrome</h3>
+            <p>Install WebAble from the Chrome Web Store with one click.</p>
+          </div>
+          <div class="step">
+            <div class="n">2</div>
+            <h3>Open it on any page</h3>
+            <p>Click the WebAble icon in your toolbar to open the controls.</p>
+          </div>
+          <div class="step">
+            <div class="n">3</div>
+            <h3>Adjust to taste</h3>
+            <p>Move the sliders and flip the toggles — the page updates as you go.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy callout -->
+    <section>
+      <div class="wrap">
+        <div class="cta-band">
+          <div>
+            <h2>Your reading habits are nobody's business</h2>
+            <p>WebAble collects no browsing history and no personal data. Your accessibility settings never leave your device.</p>
+          </div>
+          <a class="btn btn-primary btn-lg" href="privacy.html">Read our privacy policy</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <a class="brand" href="index.html"><img src="assets/icon.png" alt="" width="22" height="22"> WebAble</a>
+      <nav aria-label="Footer">
+        <a href="#features">Features</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="mailto:james.william.hou@gmail.com">Contact</a>
+        <!-- TODO: point this at the public extension repo if/when it exists -->
+        <a href="https://github.com/jameshou28" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+    <div class="wrap" style="margin-top:18px;">© 2026 WebAble. Accessibility tools to let everyone access the internet.</div>
+  </footer>
+</body>
+</html>

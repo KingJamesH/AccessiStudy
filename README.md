@@ -18,10 +18,14 @@ All changes are applied once the user clicks the "Apply Accessibility" button.
 ## The future of WebAble:
 The next step for WebAble would be implementing a text-to-speech feature. The user would be able to select text on a page and select text-to speech to read the text out loud. This would be especially helpful for students with reading disabilities. I also hope to make the UI cleaner and more compact in the future. 
 
+## Repository structure
+- `extension/` — the Chrome extension (load this folder unpacked)
+- `landing/` — the marketing website (home page + privacy policy)
+
 ## Instructions:
 ### Step 1. Download the extension files
 ### Step 2: Installing the Extension
 1. Go to chrome://extensions/
 2. Enable "Developer mode"
 3. Click "Load unpacked"
-4. Select the folder containing the extension files
+4. Select the `extension/` folder
