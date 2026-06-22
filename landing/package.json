@@ -1,0 +1,9 @@
+{
+  "name": "webable-landing",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WebAble landing page",
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1"
+  }
+}
